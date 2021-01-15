@@ -2,9 +2,14 @@
 #include <iostream>
 #include <thread>
 
+#include "json.hpp"
+
+using json = nlohmann::json;
 using namespace std;
 
 int main() {
+
+	json testJson;
 
 	cout << "Content-type: text/html" << endl << endl;
 	cout << "<html>" << endl;
@@ -13,6 +18,6 @@ int main() {
 	cout << "<h1>Hello, MRCHESS!</h1>" << endl;
 	cout << "</body>" << endl;
 	cout << "</html>" << endl;
-	
+
 	return 0;
 }

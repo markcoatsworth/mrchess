@@ -15,5 +15,5 @@ add_executable(mrchess mrchess.cpp)
 # Add the binary tree to the search path for include files
 target_include_directories(mrchess PUBLIC
     "${PROJECT_BINARY_DIR}"
-    "${PROJECT_SOURCE_DIR}/includes"
+    "${PROJECT_SOURCE_DIR}/include"
 )
