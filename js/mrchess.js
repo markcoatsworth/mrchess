@@ -1,4 +1,4 @@
-var startPositions = {
+var positions = {
     "A8": "black castle",
     "B8": "black knight",
     "C8": "black bishop",
@@ -35,16 +35,20 @@ var startPositions = {
 
 var Board = {
     init: function() {
-        for (var position in startPositions) {
-            $("table#board td#" + position).html("<a href=\"#\" class=\"piece " + startPositions[position] + "\"></a>");
+        for (var position in positions) {
+            $("table#board td#" + position).html("<a href=\"#\" class=\"piece " + positions[position] + "\"></a>");
         }
         $("a.piece").click(function() {
-            console.log($(this).parent().attr("id"));
             $.ajax({
-                data: { "Satan": 666 , "Plague": 1347 },
-                //dataType: "json", // TODO: Re-enable this when getting data back
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    action: "getAvailableMoves",
+                    board: positions,
+                    piece: $(this).parent().attr("id")
+                }),
+                dataType: "json",
                 type: "POST",
-                url: "cgi-bin/mrchess.cgi?testing=getvar",
+                url: "cgi-bin/mrchess.cgi",
                 success: function(result) {
                     console.log(result);
                 },

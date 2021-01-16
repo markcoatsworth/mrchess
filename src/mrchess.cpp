@@ -1,23 +1,40 @@
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <thread>
 
-#include "json.hpp"
+#include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
 using namespace std;
 
 int main() {
 
-	json testJson;
+	json requestJson;
+	json responseJson;
+	std::string requestMethod;
+	std::string postData;
 
-	cout << "Content-type: text/html" << endl << endl;
-	cout << "<html>" << endl;
-	cout << "<head><title>MRCHESS</title></head>" << endl;
-	cout << "<body>" << endl;
-	cout << "<h1>Hello, MRCHESS!</h1>" << endl;
-	cout << "</body>" << endl;
-	cout << "</html>" << endl;
+	// If this is a POST request, read + parse input stream data
+	if (getenv("requestMethod")) {
+		requestMethod = getenv("requestMethod");
+		if (requestMethod == "POST") {
+			std::ifstream is(stdin);
+			char c;
+			while (is.get(c)) {
+				postData += c;
+			}
+			is.close();
+			requestJson = json::parse(postData);
+		}
+	}
+
+	// Prepare response JSON
+	responseJson["availableMoves"] = { "pos1", "pos2", "pos3" };
+
+	// Send response
+	cout << "Content-type: application/json" << endl << endl;
+	cout << responseJson.dump() << endl;
 
 	return 0;
 }
