@@ -6,45 +6,85 @@ h1 {
     text-align: center;
 }
 
-#board {
+table#board {
     border-collapse: collapse;
     margin: 0 auto;
-    width: 640px;    
+    table-layout: fixed;
+    width: 700px;    
 }
 
-#board tr td {
+table#board tr td {
     background: #CCC;
     border: 1px solid #000;
     height: 80px;
     padding: 0px;
+    position: relative;
     width: 80px;
 }
 
-#board tr:nth-child(2n-1) td:nth-child(2n-1) {
+table#board tr td div#selected {
+    border: 5px solid #ff0000;
+    height: 70px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 70px;
+    z-index: 3;
+}
+
+table#board tr th.x-label {
+    height: 30px;
+}
+
+table#board tr th.y-label {
+    width: 30px;
+}
+
+table#board tr:nth-child(2n-1) td:nth-child(2n-1) {
     background: #FFF;
 }
 
-#board tr:nth-child(2n) td:nth-child(2n) {
+table#board tr:nth-child(2n) td:nth-child(2n) {
     background: #FFF;
 }
 
 /*** BOARD PIECES ***/
 
-#board a {
+table#board a.piece {
     display: block;
     height: 80px;
+    scroll-padding-left: 0;
+    position: absolute;
+    top: 0;
     width: 80px;
+    z-index: 1;
+}
+table#board a.piece.human {
+    cursor: pointer;
 }
 
-#board a.black.bishop { background-image: url("../images/black-bishop-80.png"); }
-#board a.black.castle { background-image: url("../images/black-castle-80.png"); }
-#board a.black.king { background-image: url("../images/black-king-80.png"); }
-#board a.black.knight { background-image: url("../images/black-knight-80.png"); }
-#board a.black.pawn { background-image: url("../images/black-pawn-80.png"); }
-#board a.black.queen { background-image: url("../images/black-queen-80.png"); }
-#board a.white.bishop { background-image: url("../images/white-bishop-80.png"); }
-#board a.white.castle { background-image: url("../images/white-castle-80.png"); }
-#board a.white.king { background-image: url("../images/white-king-80.png"); }
-#board a.white.knight { background-image: url("../images/white-knight-80.png"); }
-#board a.white.pawn { background-image: url("../images/white-pawn-80.png"); }
-#board a.white.queen { background-image: url("../images/white-queen-80.png"); }
+table#board a.availableMove {
+    background-color: #ff0000;
+    cursor: pointer;
+    display: block;
+    height: 80px;
+    left: 0;
+    opacity: 0.3;
+    position: absolute;
+    top: 0;
+    width: 80px;
+    z-index: 2;
+}
+
+table#board a.black.bishop { background-image: url("../images/black-bishop-80.png"); }
+table#board a.black.castle { background-image: url("../images/black-castle-80.png"); }
+table#board a.black.king { background-image: url("../images/black-king-80.png"); }
+table#board a.black.knight { background-image: url("../images/black-knight-80.png"); }
+table#board a.black.pawn { background-image: url("../images/black-pawn-80.png"); }
+table#board a.black.queen { background-image: url("../images/black-queen-80.png"); }
+table#board a.white.bishop { background-image: url("../images/white-bishop-80.png"); }
+table#board a.white.castle { background-image: url("../images/white-castle-80.png"); }
+table#board a.white.king { background-image: url("../images/white-king-80.png"); }
+table#board a.white.knight { background-image: url("../images/white-knight-80.png"); }
+table#board a.white.pawn { background-image: url("../images/white-pawn-80.png"); }
+table#board a.white.queen { background-image: url("../images/white-queen-80.png"); }

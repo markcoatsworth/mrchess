@@ -33,12 +33,30 @@ var positions = {
     "H1": "white castle"
 }
 
+var Game = {
+    humanPlayer: "white",
+    turn: "white"
+}
+
 var Board = {
     init: function() {
         for (var position in positions) {
-            $("table#board td#" + position).html("<a href=\"#\" class=\"piece " + positions[position] + "\"></a>");
+            if (positions[position].indexOf(Game.humanPlayer) >= 0) {
+                $("table#board td#" + position).html("<a class=\"human piece " + positions[position] + "\"></a>");
+            }
+            else {
+                $("table#board td#" + position).html("<a class=\"piece " + positions[position] + "\"></a>");
+            }
         }
         $("a.piece").click(function() {
+            // Only allow clicks on human player pieces
+            if (!($(this).hasClass("human"))) {
+                return;
+            }
+            // Set the selection
+            $("div#selected").remove();
+            $(this).append("<div id=\"selected\"></div>");
+            // Call our backend CGI script to get available moves
             $.ajax({
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
@@ -50,7 +68,12 @@ var Board = {
                 type: "POST",
                 url: "cgi-bin/mrchess.cgi",
                 success: function(result) {
-                    console.log(result);
+                    // Set available moves
+                    $("a.availableMove").remove();
+                    $.each(result.availableMoves, function(index, position) {
+                        $("td#" + position).append("<a class=\"availableMove\"></a>");
+                    });
+                    Board.setActions();
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     console.log(xhr.status);
@@ -58,6 +81,28 @@ var Board = {
                   }
             });
         });
+        Board.setActions();
+    },
+    setActions: function() {
+        $("a.availableMove").click(function() {
+            var new_position = $(this).parent().attr("id");
+            // TODO: There must be a better way to lookup the old position
+            var old_position;
+            $("div#selected").each(function(key, value) {
+                old_position = $(this).parent().parent().attr("id");
+            });
+            var piece = positions[old_position];
+            // Update data structures
+            delete positions[old_position];
+            positions[new_position] = piece;
+            Game.turn = (Game.humanPlayer == "white") ? "black" : "white";
+            // Update HTML board
+            $("table#board td#" + old_position + " a.piece").remove();
+            $("table#board td#" + new_position).html("<a class=\"human piece " + positions[new_position] + "\"></a>");
+            $("div#selected").remove()
+            $("a.availableMove").remove();
+            Board.setActions();
+        })
     }
 }
 
