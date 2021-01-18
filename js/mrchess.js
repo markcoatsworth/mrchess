@@ -48,6 +48,12 @@ var Board = {
                 $("table#board td#" + position).html("<a class=\"piece " + positions[position] + "\"></a>");
             }
         }
+        Board.setActions();
+    },
+    setActions: function() {
+        // Unbind all previous a.click event
+        $("a.piece").off("click");
+        // Now set new events
         $("a.piece").click(function() {
             // Only allow clicks on human player pieces
             if (!($(this).hasClass("human"))) {
@@ -60,17 +66,18 @@ var Board = {
             $.ajax({
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    action: "getAvailableMoves",
-                    piece: $(this).parent().attr("id"),
-                    positions: positions
+                    action: "getPieceAvailableMoves",
+                    position: $(this).parent().attr("id"),
+                    board: positions
                 }),
-                //dataType: "json",
+                dataType: "json",
                 type: "POST",
                 url: "cgi-bin/mrchess.cgi",
-                success: function(result) {
+                success: function(results) {
+                    console.log(results);
                     // Set available moves
                     $("a.availableMove").remove();
-                    $.each(result.availableMoves, function(index, position) {
+                    $.each(results, function(index, position) {
                         $("td#" + position).append("<a class=\"availableMove\"></a>");
                     });
                     Board.setActions();
@@ -78,12 +85,11 @@ var Board = {
                 error: function (xhr, ajaxOptions, thrownError) {
                     console.log(xhr.status);
                     console.log(thrownError);
-                  }
+                }
             });
         });
-        Board.setActions();
-    },
-    setActions: function() {
+        // We don't need to unbind previous a.availableMoves because they don't exist,
+        // all previous a.availableMove elements get removed as part of the click event
         $("a.availableMove").click(function() {
             var new_position = $(this).parent().attr("id");
             // TODO: There must be a better way to lookup the old position
