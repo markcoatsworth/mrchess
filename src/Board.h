@@ -43,6 +43,12 @@ class Board
     std::vector<std::string> getPieceAvailableMoves(std::string position);
 
     /**
+     * Determine the next move for the specified color
+     * For now, this move is randomly generated
+     */
+    json getMove(PieceColor color);
+
+    /**
      * Map of chess positions (ie. A2, D4) to board array indices (48, 35)
      * Hardcoded for O(1) lookups
      */

@@ -4,13 +4,17 @@
 
 using namespace std;
 
-Piece::Piece(): _color(PieceColor::NONE), _type(PieceType::NONE) {
+Piece::Piece(): 
+    _position(""),
+    _color(PieceColor::NONE), 
+    _type(PieceType::NONE) 
+{}
 
-}
-
-Piece::Piece(PieceColor color, PieceType type): _color(color), _type(type) {
-    
-}
+Piece::Piece(std::string position, PieceColor color, PieceType type):
+    _position(position), 
+    _color(color), 
+    _type(type) 
+{}
 
 Piece::Piece(const Piece& piece) {
     _color = piece._color;
@@ -32,6 +36,10 @@ std::string Piece::toString() {
         case PieceType::KING:   str += "Ki"; break;
     }
     return str;
+}
+
+const std::string Piece::getPosition() {
+    return _position;
 }
 
 const PieceColor Piece::getColor() {

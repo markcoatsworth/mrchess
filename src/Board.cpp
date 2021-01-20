@@ -1,9 +1,8 @@
 #include <chrono>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <iostream>
-#include <thread>
-#include <typeinfo>
 
 #include "Board.h"
 #include "nlohmann/json.hpp"
@@ -51,7 +50,7 @@ void Board::setPositions(json &positions) {
         if (pieceClass.find("queen") != std::string::npos) type = PieceType::QUEEN;
         if (pieceClass.find("king") != std::string::npos) type = PieceType::KING;
         
-        Piece piece = Piece(color, type);
+        Piece piece = Piece(piecePosition, color, type);
         _positions[positionIndex.at(piecePosition)] = piece;
     }
 }
@@ -170,4 +169,33 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
     }
 
     return moves;
+}
+
+json Board::getMove(PieceColor color) {
+    std::unordered_map< std::string, std::vector<std::string>> allMoves{};
+    json move;
+
+    // Setup a json object of all possible moves for the specified color
+    for (auto it = _positions.begin(); it != _positions.end(); it++) {
+        if (it->getColor() == color) {
+            std::string position = it->getPosition();
+            std::vector<std::string> moves = getPieceAvailableMoves(position);
+            if (moves.size() > 0) {
+                allMoves[position] = moves;
+            }
+        }
+    }
+
+    // Seed a random number generator using current time milliseconds
+    auto duration = std::chrono::system_clock::now().time_since_epoch();
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    std::srand(millis);
+
+    // Now pick a move at random
+    auto it = allMoves.begin();
+    std::advance(it, std::rand() % allMoves.size());
+    move["moveFrom"] = it->first;
+    move["moveTo"] = it->second[std::rand() % it->second.size()];
+
+    return move;
 }

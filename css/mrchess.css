@@ -1,9 +1,21 @@
 body {
-    
+    font-family: 'Raleway', sans-serif;
 }
 
 h1 {
+    font-size: 40px;
     text-align: center;
+}
+
+div#status-bar {
+    background-color: #CCC;
+    border: 2px solid #999;
+    font-weight: bold;
+    height: 20px;
+    margin: 0 auto 20px auto;
+    padding: 5px;
+    text-align: center;
+    width: 640px;
 }
 
 table#board {
@@ -69,7 +81,7 @@ table#board a.availableMove {
     display: block;
     height: 80px;
     left: 0;
-    opacity: 0.3;
+    opacity: 0.5;
     position: absolute;
     top: 0;
     width: 80px;

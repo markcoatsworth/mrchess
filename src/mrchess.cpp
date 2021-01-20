@@ -17,6 +17,7 @@ int main() {
     json requestJson;
     json responseJson;
     std::string requestAction;
+    std::string requestColor;
     std::string requestMethod;
     std::string requestPosition;
     std::string postData;
@@ -33,7 +34,6 @@ int main() {
                 responseJson["parseError"] = error.what();
             }
             requestAction = requestJson["action"];
-            requestPosition = requestJson["position"];
         }
     }
     // If this is not a POST request, assume we're in debug mode
@@ -70,7 +70,7 @@ int main() {
             {"E1", "white king"},
             {"F1", "white bishop"},
             {"G1", "white knight"},
-            {"D4", "white rook"}
+            {"H1", "white rook"}
         };
         requestAction = "getPieceAvailableMoves";
         requestPosition = "G1";
@@ -84,7 +84,13 @@ int main() {
 
     // Perform the requested action
     if (requestAction == "getPieceAvailableMoves") {
+        requestPosition = requestJson["position"];
         responseJson = board.getPieceAvailableMoves(requestPosition);
+    }
+    else if (requestAction == "getMove") {
+        requestColor = requestJson["color"];
+        PieceColor color = (requestColor == "white") ? PieceColor::WHITE : PieceColor::BLACK;
+        responseJson = board.getMove(color);
     }
 
     // Send response

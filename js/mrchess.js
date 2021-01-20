@@ -38,6 +38,45 @@ var Game = {
     turn: "white"
 }
 
+var MRCHESS = {
+    playMove: function() {
+        // Call our backend CGI script to get computer move
+        $.ajax({
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                action: "getMove",
+                color: Game.turn,
+                board: positions
+            }),
+            dataType: "json",
+            type: "POST",
+            url: "cgi-bin/mrchess.cgi",
+            success: function(result) {
+                console.log(result);
+                var fromPos = result.moveFrom;
+                var toPos = result.moveTo;
+                var piece = positions[fromPos];
+                // Update data structures
+                delete positions[fromPos];
+                positions[toPos] = piece;
+                Game.turn = (Game.turn == "white") ? "black" : "white";
+                // Update HTML board
+                $("table#board td#" + fromPos + " a.piece").remove();
+                $("table#board td#" + toPos).html("<a class=\"piece " + positions[toPos] + "\"></a>");
+                $("div#selected").remove()
+                $("a.availableMove").remove();
+                Board.setActions();
+                // Update status
+                $("div#status-bar").html("Black moved " + fromPos + " to " + toPos + ". White turn");
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.status);
+                console.log(thrownError);
+            }
+        });
+    }
+}
+
 var Board = {
     init: function() {
         for (var position in positions) {
@@ -101,13 +140,16 @@ var Board = {
             // Update data structures
             delete positions[old_position];
             positions[new_position] = piece;
-            Game.turn = (Game.humanPlayer == "white") ? "black" : "white";
+            Game.turn = (Game.turn == "white") ? "black" : "white";
             // Update HTML board
             $("table#board td#" + old_position + " a.piece").remove();
             $("table#board td#" + new_position).html("<a class=\"human piece " + positions[new_position] + "\"></a>");
             $("div#selected").remove()
             $("a.availableMove").remove();
             Board.setActions();
+            // Update status and trigger next move
+            $("div#status-bar").html("Black turn. Computer is thinking...");
+            MRCHESS.playMove();
         })
     }
 }

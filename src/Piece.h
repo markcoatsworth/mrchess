@@ -19,7 +19,7 @@ public:
     /**
      * Piece object constructor with initialialized values
      */
-    Piece(PieceColor color, PieceType type);
+    Piece(std::string position, PieceColor color, PieceType type);
 
     /**
      * Copy structor
@@ -31,6 +31,11 @@ public:
      * (C = color, T = tyoe), or "." if none
      */
     std::string toString();
+
+    /**
+     * Return a string representation of the piece position (ie. "A4", "F5")
+     */
+    const std::string getPosition();
 
     /**
      * Return the color of piece
@@ -48,6 +53,7 @@ public:
 
     PieceColor _color;
     PieceType _type;
+    std::string _position;
 
 };
 
