@@ -25,13 +25,13 @@ int main() {
     if (getenv("REQUEST_METHOD")) {
         requestMethod = getenv("REQUEST_METHOD");
         if (requestMethod == "POST") {
-            std::ifstream is(stdin);
-            char c;
-            while (is.get(c)) {
-                postData += c;
+            std::getline(cin, postData);
+            try {
+                requestJson = json::parse(postData);
             }
-            is.close();
-            requestJson = json::parse(postData);
+            catch (json::parse_error error) {
+                responseJson["parseError"] = error.what();
+            }
             requestAction = requestJson["action"];
             requestPosition = requestJson["position"];
         }

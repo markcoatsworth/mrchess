@@ -7,13 +7,14 @@ project(mrchess)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-SET(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_FLAGS "-std=c++2a")
 
 # Add the executable
 add_executable(mrchess mrchess.cpp)
 
-# Add the binary tree to the search path for include files
-target_include_directories(mrchess PUBLIC
-    "${PROJECT_BINARY_DIR}"
-    "${PROJECT_SOURCE_DIR}/include"
-)
+# Add libraries
+add_library(Board Board.cpp)
+add_library(Piece Piece.cpp)
+
+# Link libraries to executable
+target_link_libraries(mrchess LINK_PUBLIC Board Piece)
