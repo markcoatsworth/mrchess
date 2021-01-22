@@ -48,7 +48,7 @@ var MRCHESS = {
                 color: Game.turn,
                 board: positions
             }),
-            dataType: "json",
+            //dataType: "json",
             type: "POST",
             url: "cgi-bin/mrchess.cgi",
             success: function(result) {

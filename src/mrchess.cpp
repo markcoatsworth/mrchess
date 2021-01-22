@@ -4,13 +4,18 @@
 #include <string>
 #include <thread>
 
+#ifdef WIN32
+    #include <windows.h>
+    #include <debugapi.h>
+#endif
+
 #include "Board.h"
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
 
     Board board;
     bool debug = false;
@@ -21,6 +26,24 @@ int main() {
     std::string requestMethod;
     std::string requestPosition;
     std::string postData;
+
+    // Parse command-line arguments
+    for (int i = 0; i < argc; i++) {
+        if (strcmp(argv[i], "-debug") == 0) {
+            debug = true;
+        }
+    }
+
+#ifdef WIN32
+    // If in debug mode, wait for the debugger to attach
+    if (debug || requestJson.find("debug") != requestJson.end()) {
+        bool is_debugger = false;
+        while (!is_debugger) {
+            is_debugger = IsDebuggerPresent();
+            std::this_thread::sleep_for(1000ms);
+        }
+    }
+#endif
 
     // If this is a POST request, read + parse input stream data
     if (getenv("REQUEST_METHOD")) {
@@ -33,11 +56,22 @@ int main() {
             catch (json::parse_error error) {
                 responseJson["parseError"] = error.what();
             }
-            requestAction = requestJson["action"];
+
+            // Set local variables defined in the JSON request
+            if (requestJson.find("action") != requestJson.end()) {
+                requestAction = requestJson["action"];
+            }
+            if (requestJson.find("position") != requestJson.end()) {
+                requestPosition = requestJson["position"];
+            }
+            if (requestJson.find("color") != requestJson.end()) {
+                requestColor = requestJson["color"];
+            }
         }
     }
-    // If this is not a POST request, assume we're in debug mode
+    // If this is not a POST request, switch into debug mode
     else {
+        debug = true;
         requestJson["board"] = {
             {"A8", "black rook"},
             {"B8", "black knight"},
@@ -73,22 +107,18 @@ int main() {
             {"H1", "white rook"}
         };
         requestAction = "getPieceAvailableMoves";
+        requestColor = "black";
         requestPosition = "G1";
     }
 
     // Setup the board
     board.setPositions(requestJson["board"]);
-    if (debug) {
-        board.draw();
-    }
 
     // Perform the requested action
     if (requestAction == "getPieceAvailableMoves") {
-        requestPosition = requestJson["position"];
         responseJson = board.getPieceAvailableMoves(requestPosition);
     }
     else if (requestAction == "getMove") {
-        requestColor = requestJson["color"];
         PieceColor color = (requestColor == "white") ? PieceColor::WHITE : PieceColor::BLACK;
         responseJson = board.getMove(color);
     }
