@@ -194,8 +194,8 @@ json Board::getMove(PieceColor color) {
     // Now pick a move at random
     auto it = allMoves.begin();
     std::advance(it, std::rand() % allMoves.size());
-    move["moveFrom"] = it->first;
-    move["moveTo"] = it->second[std::rand() % it->second.size()];
+    move["from"] = it->first;
+    move["to"] = it->second[std::rand() % it->second.size()];
 
     return move;
 }

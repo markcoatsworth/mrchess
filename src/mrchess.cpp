@@ -34,17 +34,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-#ifdef WIN32
-    // If in debug mode, wait for the debugger to attach
-    if (debug || requestJson.find("debug") != requestJson.end()) {
-        bool is_debugger = false;
-        while (!is_debugger) {
-            is_debugger = IsDebuggerPresent();
-            std::this_thread::sleep_for(1000ms);
-        }
-    }
-#endif
-
     // If this is a POST request, read + parse input stream data
     if (getenv("REQUEST_METHOD")) {
         requestMethod = getenv("REQUEST_METHOD");
@@ -69,9 +58,8 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-    // If this is not a POST request, switch into debug mode
+    // If this is not a POST request, drop in some default values for debugging
     else {
-        debug = true;
         requestJson["board"] = {
             {"A8", "black rook"},
             {"B8", "black knight"},
@@ -111,16 +99,30 @@ int main(int argc, char* argv[]) {
         requestPosition = "G1";
     }
 
+#ifdef WIN32
+    // If in debug mode, wait for the debugger to attach
+    if (requestJson.find("debugger") != requestJson.end() && requestJson["debugger"] == true) {
+        responseJson["found_debugger"] = "true";
+    }
+    if (debug || (requestJson.find("debugger") != requestJson.end() && requestJson["debugger"] == true)) {
+        bool is_debugger = false;
+        while (!is_debugger) {
+            is_debugger = IsDebuggerPresent();
+            std::this_thread::sleep_for(1000ms);
+        }
+    }
+#endif
+
     // Setup the board
     board.setPositions(requestJson["board"]);
 
     // Perform the requested action
     if (requestAction == "getPieceAvailableMoves") {
-        responseJson = board.getPieceAvailableMoves(requestPosition);
+        responseJson["moves"] = board.getPieceAvailableMoves(requestPosition);
     }
     else if (requestAction == "getMove") {
         PieceColor color = (requestColor == "white") ? PieceColor::WHITE : PieceColor::BLACK;
-        responseJson = board.getMove(color);
+        responseJson["move"] = board.getMove(color);
     }
 
     // Send response

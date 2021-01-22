@@ -7,6 +7,17 @@ h1 {
     text-align: center;
 }
 
+/*** GAME PANEL ***/
+
+div#game-panel {
+
+}
+
+div#game-panel.split {
+    float: left;
+    width: 70%;
+}
+
 div#status-bar {
     background-color: #CCC;
     border: 2px solid #999;
@@ -17,6 +28,8 @@ div#status-bar {
     text-align: center;
     width: 640px;
 }
+
+/*** GAME BOARD ***/
 
 table#board {
     border-collapse: collapse;
@@ -100,3 +113,34 @@ table#board a.white.king { background-image: url("../images/white-king-80.png");
 table#board a.white.knight { background-image: url("../images/white-knight-80.png"); }
 table#board a.white.pawn { background-image: url("../images/white-pawn-80.png"); }
 table#board a.white.queen { background-image: url("../images/white-queen-80.png"); }
+
+/*** DEBUG PANEL ***/
+
+div#debug-panel {
+    background-color: #ddd;
+    box-sizing: border-box;
+    display: none;
+    height: 100%;
+    padding: 10px;
+}
+
+div#debug-panel h2 {
+    margin: 0 auto;
+}
+
+div#debug-panel.split {
+    float: right;
+    width: 30%;
+}
+
+div#debug-options {
+}
+
+div#debug-log {
+    background-color: #eee;
+    border: 1px solid #000;
+    font-family: monospace;
+    height: 500px;
+    padding: 5px;
+    overflow: auto;
+}

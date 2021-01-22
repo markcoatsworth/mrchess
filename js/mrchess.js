@@ -38,6 +38,18 @@ var Game = {
     turn: "white"
 }
 
+var Debug = {
+    init: function() {
+        $("div#debug-panel").show();
+        $("div#game-panel").addClass("split");
+        $("div#debug-panel").addClass("split");
+    },
+    log: function(msg) {
+        console.log(msg);
+        $("div#debug-log").append(JSON.stringify(msg) + "<br/>--<br/>");
+    }
+}
+
 var MRCHESS = {
     playMove: function() {
         // Call our backend CGI script to get computer move
@@ -45,16 +57,17 @@ var MRCHESS = {
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
                 action: "getMove",
+                board: positions,
                 color: Game.turn,
-                board: positions
+                debugger: $("#debugger-wait").get(0).checked
             }),
-            //dataType: "json",
+            dataType: "json",
             type: "POST",
             url: "cgi-bin/mrchess.cgi",
             success: function(result) {
-                console.log(result);
-                var fromPos = result.moveFrom;
-                var toPos = result.moveTo;
+                Debug.log(result);
+                var fromPos = result.move.from;
+                var toPos = result.move.to;
                 var piece = positions[fromPos];
                 // Update data structures
                 delete positions[fromPos];
@@ -70,8 +83,8 @@ var MRCHESS = {
                 $("div#status-bar").html("Black moved " + fromPos + " to " + toPos + ". White turn");
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                console.log(xhr.status);
-                console.log(thrownError);
+                Debug.log(xhr.status);
+                Debug.log(thrownError);
             }
         });
     }
@@ -106,24 +119,25 @@ var Board = {
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
                     action: "getPieceAvailableMoves",
-                    position: $(this).parent().attr("id"),
-                    board: positions
+                    board: positions,
+                    debugger: $("#debugger-wait").get(0).checked,
+                    position: $(this).parent().attr("id")
                 }),
                 dataType: "json",
                 type: "POST",
                 url: "cgi-bin/mrchess.cgi",
                 success: function(results) {
-                    console.log(results);
+                    Debug.log(results);
                     // Set available moves
                     $("a.availableMove").remove();
-                    $.each(results, function(index, position) {
+                    $.each(results.moves, function(index, position) {
                         $("td#" + position).append("<a class=\"availableMove\"></a>");
                     });
                     Board.setActions();
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    console.log(xhr.status);
-                    console.log(thrownError);
+                    Debug.log(xhr.status);
+                    Debug.log(thrownError);
                 }
             });
         });
@@ -156,5 +170,10 @@ var Board = {
 
 $(document).ready(function() {
     Board.init();
+
+    var urlParams = new URLSearchParams(window.location.search); // Get all URL parameters
+    if (urlParams.get("debug")) {
+        Debug.init();
+    }
 });
 
