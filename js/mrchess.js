@@ -50,7 +50,7 @@ var Debug = {
     }
 }
 
-var MRCHESS = {
+var Computer = {
     playMove: function() {
         // Call our backend CGI script to get computer move
         $.ajax({
@@ -68,19 +68,29 @@ var MRCHESS = {
                 Debug.log(result);
                 var fromPos = result.move.from;
                 var toPos = result.move.to;
-                var piece = positions[fromPos];
+                var fromPiece = positions[fromPos];
+                var toPiece = positions[toPos];
                 // Update data structures
                 delete positions[fromPos];
-                positions[toPos] = piece;
+                positions[toPos] = fromPiece;
                 Game.turn = (Game.turn == "white") ? "black" : "white";
+                computerPlayer = (Game.humanPlayer == "white" ) ? "black" : "white";
                 // Update HTML board
                 $("table#board td#" + fromPos + " a.piece").remove();
                 $("table#board td#" + toPos).html("<a class=\"piece " + positions[toPos] + "\"></a>");
                 $("div#selected").remove()
                 $("a.availableMove").remove();
-                Board.setActions();
-                // Update status
-                $("div#status-bar").html("Black moved " + fromPos + " to " + toPos + ". White turn");
+                // If this was a special move (castling or promotion), complete it
+                Board.checkForSpecialMove(fromPos, toPos);
+                // Check if game is over, and update status
+                if (toPiece != undefined && toPiece.indexOf("king") >= 0) {
+                    $("div#status-bar").html("Game over. <span class=\"capitalize\">" + computerPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
+                    Board.removeActions();
+                }
+                else {
+                    $("div#status-bar").html("<span class=\"capitalize\">" + computerPlayer + " </span> moved " + fromPos + " to " + toPos + ". <span class=\"capitalize\">" + Game.turn + "</span> turn");
+                    Board.setActions();
+                }
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 Debug.log(xhr.status);
@@ -101,6 +111,9 @@ var Board = {
             }
         }
         Board.setActions();
+    },
+    removeActions: function() {
+        $("a.piece").off("click");
     },
     setActions: function() {
         // Unbind all previous a.click event
@@ -144,27 +157,74 @@ var Board = {
         // We don't need to unbind previous a.availableMoves because they don't exist,
         // all previous a.availableMove elements get removed as part of the click event
         $("a.availableMove").click(function() {
-            var new_position = $(this).parent().attr("id");
+            var toPos = $(this).parent().attr("id");
             // TODO: There must be a better way to lookup the old position
-            var old_position;
+            var fromPos;
             $("div#selected").each(function(key, value) {
-                old_position = $(this).parent().parent().attr("id");
+                fromPos = $(this).parent().parent().attr("id");
             });
-            var piece = positions[old_position];
+            var fromPiece = positions[fromPos];
+            var toPiece = positions[toPos];
             // Update data structures
-            delete positions[old_position];
-            positions[new_position] = piece;
+            delete positions[fromPos];
+            positions[toPos] = fromPiece;
             Game.turn = (Game.turn == "white") ? "black" : "white";
             // Update HTML board
-            $("table#board td#" + old_position + " a.piece").remove();
-            $("table#board td#" + new_position).html("<a class=\"human piece " + positions[new_position] + "\"></a>");
+            $("table#board td#" + fromPos + " a.piece").remove();
+            $("table#board td#" + toPos).html("<a class=\"human piece " + positions[toPos] + "\"></a>");
             $("div#selected").remove()
             $("a.availableMove").remove();
-            Board.setActions();
-            // Update status and trigger next move
-            $("div#status-bar").html("Black turn. Computer is thinking...");
-            MRCHESS.playMove();
+            // If this was a special move (castling or promotion), complete it
+            Board.checkForSpecialMove(fromPos, toPos);
+            // Check if game is over, and update status
+            if (toPiece != undefined && toPiece.indexOf("king") >= 0) {
+                $("div#status-bar").html("Game over. <span class=\"capitalize\">" + Game.humanPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
+                Board.removeActions();
+            }
+            else {
+                $("div#status-bar").html("<span class=\"capitalize\">" + Game.turn + "</span> turn. Computer is thinking...");
+                Board.setActions();
+                Computer.playMove();
+            }
         })
+    },
+    // TODO: This needs a lot of work. For one, only call it when we know it's a special move.
+    checkForSpecialMove: function(fromPos, toPos) {
+        // Castling
+        var isSpecialMove = false;
+        var rookFrom = "";
+        var rookTo = "";
+        if (fromPos == "E1") {
+            if (toPos == "C1" && positions["C1"].indexOf("king") >= 0) {
+                rookFrom = "A1";
+                rookTo = "D1";
+                isSpecialMove = true;
+            }
+            else if (toPos == "G1" && positions["G1"].indexOf("king") >= 0) {
+                rookFrom = "H1";
+                rookTo = "F1";
+                isSpecialMove = true;
+            }
+        }
+        else if (fromPos == "E8") {
+            if (toPos == "C8" && positions["C8"].indexOf("king") >= 0) {
+                rookFrom = "A8";
+                rookTo = "D8";
+                isSpecialMove = true;
+            }
+            else if (toPos == "G8" && positions["G8"].indexOf("king") >= 0) {
+                rookFrom = "H8";
+                rookTo = "F8";
+                isSpecialMove = true;
+            }
+        }
+        if (isSpecialMove == true) {
+            $("table#board td#" + rookFrom + " a.piece").remove();
+            $("table#board td#" + rookTo).html("<a class=\"human piece " + positions[rookFrom] + "\"></a>");
+            var rookPiece = positions[rookFrom];
+            delete positions[rookFrom];
+            positions[rookTo] = rookPiece;
+        }
     }
 }
 
@@ -174,6 +234,11 @@ $(document).ready(function() {
     var urlParams = new URLSearchParams(window.location.search); // Get all URL parameters
     if (urlParams.get("debug")) {
         Debug.init();
+    }
+
+    // If human player is not white, play the first move
+    if (Game.humanPlayer != "white") {
+        Computer.playMove();
     }
 });
 

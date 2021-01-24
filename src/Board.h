@@ -35,7 +35,7 @@ class Board
     /**
      * Set all the piece positions on the board
      */
-    void setPositions(json &positions);
+    void setPieces(json &piecePositions);
 
     /**
      * Get a list of all available moves for the piece at specified position
@@ -80,7 +80,7 @@ class Board
 
   private:
 
-      std::array<Piece, 64> _positions{ {} };
+      std::array<Piece, 64> _pieces{ {} };
 
 };
 

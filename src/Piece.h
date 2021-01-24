@@ -19,7 +19,7 @@ public:
     /**
      * Piece object constructor with initialialized values
      */
-    Piece(std::string position, PieceColor color, PieceType type);
+    Piece(PieceColor color, PieceType type);
 
     /**
      * Copy structor
@@ -51,9 +51,9 @@ public:
 
   private:
 
+    // TODO: Color and type should be replaced with a single-byte char bitwise representation
     PieceColor _color;
     PieceType _type;
-    std::string _position;
 
 };
 

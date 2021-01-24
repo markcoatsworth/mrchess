@@ -94,17 +94,14 @@ int main(int argc, char* argv[]) {
             {"G1", "white knight"},
             {"H1", "white rook"}
         };
-        requestAction = "getPieceAvailableMoves";
+        requestAction = "getMove";
         requestColor = "black";
         requestPosition = "G1";
     }
 
 #ifdef WIN32
-    // If in debug mode, wait for the debugger to attach
+    // Check if the request asked to wait for debugger to attach
     if (requestJson.find("debugger") != requestJson.end() && requestJson["debugger"] == true) {
-        responseJson["found_debugger"] = "true";
-    }
-    if (debug || (requestJson.find("debugger") != requestJson.end() && requestJson["debugger"] == true)) {
         bool is_debugger = false;
         while (!is_debugger) {
             is_debugger = IsDebuggerPresent();
@@ -114,7 +111,7 @@ int main(int argc, char* argv[]) {
 #endif
 
     // Setup the board
-    board.setPositions(requestJson["board"]);
+    board.setPieces(requestJson["board"]);
 
     // Perform the requested action
     if (requestAction == "getPieceAvailableMoves") {
