@@ -1,36 +1,36 @@
 var positions = {
-    "A8": "black rook",
-    "B8": "black knight",
-    "C8": "black bishop",
-    "D8": "black queen",
-    "E8": "black king",
-    "F8": "black bishop",
-    "G8": "black knight",
-    "H8": "black rook",
-    "A7": "black pawn",
-    "B7": "black pawn",
-    "C7": "black pawn",
-    "D7": "black pawn",
-    "E7": "black pawn",
-    "F7": "black pawn",
-    "G7": "black pawn",
-    "H7": "black pawn",
-    "A2": "white pawn",
-    "B2": "white pawn",
-    "C2": "white pawn",
-    "D2": "white pawn",
-    "E2": "white pawn",
-    "F2": "white pawn",
-    "G2": "white pawn",
-    "H2": "white pawn",
-    "A1": "white rook",
-    "B1": "white knight",
-    "C1": "white bishop",
-    "D1": "white queen",
-    "E1": "white king",
-    "F1": "white bishop",
-    "G1": "white knight",
-    "H1": "white rook"
+    "a8": "black rook",
+    "b8": "black knight",
+    "c8": "black bishop",
+    "d8": "black queen",
+    "e8": "black king",
+    "f8": "black bishop",
+    "g8": "black knight",
+    "h8": "black rook",
+    "a7": "black pawn",
+    "b7": "black pawn",
+    "c7": "black pawn",
+    "d7": "black pawn",
+    "e7": "black pawn",
+    "f7": "black pawn",
+    "g7": "black pawn",
+    "h7": "black pawn",
+    "a2": "white pawn",
+    "b2": "white pawn",
+    "c2": "white pawn",
+    "d2": "white pawn",
+    "e2": "white pawn",
+    "f2": "white pawn",
+    "g2": "white pawn",
+    "h2": "white pawn",
+    "a1": "white rook",
+    "b1": "white knight",
+    "c1": "white bishop",
+    "d1": "white queen",
+    "e1": "white king",
+    "f1": "white bishop",
+    "g1": "white knight",
+    "h1": "white rook"
 }
 
 var Game = {
@@ -194,27 +194,27 @@ var Board = {
         var isSpecialMove = false;
         var rookFrom = "";
         var rookTo = "";
-        if (fromPos == "E1") {
-            if (toPos == "C1" && positions["C1"].indexOf("king") >= 0) {
-                rookFrom = "A1";
-                rookTo = "D1";
+        if (fromPos == "e1") {
+            if (toPos == "c1" && positions["c1"].indexOf("king") >= 0) {
+                rookFrom = "a1";
+                rookTo = "d1";
                 isSpecialMove = true;
             }
-            else if (toPos == "G1" && positions["G1"].indexOf("king") >= 0) {
-                rookFrom = "H1";
-                rookTo = "F1";
+            else if (toPos == "g1" && positions["g1"].indexOf("king") >= 0) {
+                rookFrom = "h1";
+                rookTo = "f1";
                 isSpecialMove = true;
             }
         }
-        else if (fromPos == "E8") {
-            if (toPos == "C8" && positions["C8"].indexOf("king") >= 0) {
-                rookFrom = "A8";
-                rookTo = "D8";
+        else if (fromPos == "e8") {
+            if (toPos == "c8" && positions["c8"].indexOf("king") >= 0) {
+                rookFrom = "a8";
+                rookTo = "d8";
                 isSpecialMove = true;
             }
-            else if (toPos == "G8" && positions["G8"].indexOf("king") >= 0) {
-                rookFrom = "H8";
-                rookTo = "F8";
+            else if (toPos == "g8" && positions["g8"].indexOf("king") >= 0) {
+                rookFrom = "h8";
+                rookTo = "f8";
                 isSpecialMove = true;
             }
         }

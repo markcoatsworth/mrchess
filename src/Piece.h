@@ -33,7 +33,7 @@ public:
     std::string toString();
 
     /**
-     * Return a string representation of the piece position (ie. "A4", "F5")
+     * Return a string representation of the piece position (ie. "a4", "f5")
      */
     const std::string getPosition();
 
