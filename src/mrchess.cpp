@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
         };
         requestAction = "getMove";
         requestColor = "black";
-        requestPosition = "g1";
+        requestPosition = "c2";
     }
 
 #ifdef WIN32
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Send response
-    cout << "content-type: application/json" << endl << endl;
+    cout << "Content-type: application/json" << endl << endl;
     cout << responseJson.dump() << endl;
 
     return 0;

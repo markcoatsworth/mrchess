@@ -46,13 +46,13 @@ class Board
      * Determine the next move for the specified color
      * For now, this move is randomly generated
      */
-    json getMove(PieceColor color);
+    std::string getMove(PieceColor color);
 
     /**
      * Map of chess positions (ie. a2, d4) to board array indices (48, 35)
      * Hardcoded for O(1) lookups
      */
-    const std::unordered_map<std::string, int> positionIndex = {
+    static inline const std::unordered_map<std::string, int> positionIndex = {
         {"a8", 0},  {"b8", 1},  {"c8", 2},  {"d8", 3},  {"e8", 4},  {"f8", 5},  {"g8", 6},  {"h8", 7},
         {"a7", 8},  {"b7", 9},  {"c7", 10}, {"d7", 11}, {"e7", 12}, {"f7", 13}, {"g7", 14}, {"h7", 15},
         {"a6", 16}, {"b6", 17}, {"c6", 18}, {"d6", 19}, {"e6", 20}, {"f6", 21}, {"g6", 22}, {"h6", 23},
@@ -67,7 +67,7 @@ class Board
      * Map of array indicies (ie. 48, 35) to chess positions (a2, d4)
      * Hardcoded for O(1) lookups
      */
-    const std::unordered_map<int, std::string> indexPosition = {
+    static inline const std::unordered_map<int, std::string> indexPosition = {
         {0, "a8"},  {1, "b8"},  {2, "c8"},  {3, "d8"},  {4, "e8"},  {5, "f8"},  {6, "g8"},  {7, "h8"},
         {8, "a7"},  {9, "b7"},  {10, "c7"}, {11, "d7"}, {12, "e7"}, {13, "f7"}, {14, "g7"}, {15, "h7"},
         {16, "a6"}, {17, "b6"}, {18, "c6"}, {19, "d6"}, {20, "e6"}, {21, "f6"}, {22, "g6"}, {23, "h6"},

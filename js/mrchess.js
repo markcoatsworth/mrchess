@@ -52,22 +52,24 @@ var Debug = {
 
 var Computer = {
     playMove: function() {
+        var postData = JSON.stringify({
+            action: "getMove",
+            board: positions,
+            color: Game.turn,
+            debugger: $("#debugger-wait").get(0).checked
+        });
+        //Debug.log("Sending postData = " + postData);
         // Call our backend CGI script to get computer move
         $.ajax({
             contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                action: "getMove",
-                board: positions,
-                color: Game.turn,
-                debugger: $("#debugger-wait").get(0).checked
-            }),
+            data: postData,
             dataType: "json",
             type: "POST",
             url: "cgi-bin/mrchess.cgi",
             success: function(result) {
-                Debug.log(result);
-                var fromPos = result.move.from;
-                var toPos = result.move.to;
+                //Debug.log(result);
+                var fromPos = result.move.substring(0, 2);
+                var toPos = result.move.substring(2, 4);
                 var fromPiece = positions[fromPos];
                 var toPiece = positions[toPos];
                 // Update data structures
@@ -81,7 +83,9 @@ var Computer = {
                 $("div#selected").remove()
                 $("a.availableMove").remove();
                 // If this was a special move (castling or promotion), complete it
-                Board.checkForSpecialMove(fromPos, toPos);
+                if (result.move.length > 4) {
+                    Board.playSpecialMove(result.move);
+                }
                 // Check if game is over, and update status
                 if (toPiece != undefined && toPiece.indexOf("king") >= 0) {
                     $("div#status-bar").html("Game over. <span class=\"capitalize\">" + computerPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
@@ -116,8 +120,8 @@ var Board = {
         $("a.piece").off("click");
     },
     setActions: function() {
-        // Unbind all previous a.click event
-        $("a.piece").off("click");
+        // Remove previous actions
+        Board.removeActions();
         // Now set new events
         $("a.piece").click(function() {
             // Only allow clicks on human player pieces
@@ -127,15 +131,17 @@ var Board = {
             // Set the selection
             $("div#selected").remove();
             $(this).append("<div id=\"selected\"></div>");
+            var postData = JSON.stringify({
+                action: "getPieceAvailableMoves",
+                board: positions,
+                debugger: $("#debugger-wait").get(0).checked,
+                position: $(this).parent().attr("id")
+            });
+            //Debug.log("Sending postData = " + postData);
             // Call our backend CGI script to get available moves
             $.ajax({
                 contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    action: "getPieceAvailableMoves",
-                    board: positions,
-                    debugger: $("#debugger-wait").get(0).checked,
-                    position: $(this).parent().attr("id")
-                }),
+                data: postData,
                 dataType: "json",
                 type: "POST",
                 url: "cgi-bin/mrchess.cgi",
@@ -143,8 +149,9 @@ var Board = {
                     Debug.log(results);
                     // Set available moves
                     $("a.availableMove").remove();
-                    $.each(results.moves, function(index, position) {
-                        $("td#" + position).append("<a class=\"availableMove\"></a>");
+                    $.each(results.moves, function(index, move) {
+                        var toPos = move.substring(2, 4);
+                        $("td#" + toPos).append("<a id=\"" + move + "\" class=\"availableMove\"></a>");
                     });
                     Board.setActions();
                 },
@@ -157,12 +164,9 @@ var Board = {
         // We don't need to unbind previous a.availableMoves because they don't exist,
         // all previous a.availableMove elements get removed as part of the click event
         $("a.availableMove").click(function() {
-            var toPos = $(this).parent().attr("id");
-            // TODO: There must be a better way to lookup the old position
-            var fromPos;
-            $("div#selected").each(function(key, value) {
-                fromPos = $(this).parent().parent().attr("id");
-            });
+            var move = $(this).attr("id")
+            var fromPos = move.substring(0, 2);
+            var toPos = move.substring(2, 4);
             var fromPiece = positions[fromPos];
             var toPiece = positions[toPos];
             // Update data structures
@@ -174,8 +178,11 @@ var Board = {
             $("table#board td#" + toPos).html("<a class=\"human piece " + positions[toPos] + "\"></a>");
             $("div#selected").remove()
             $("a.availableMove").remove();
+            Debug.log("Checking for special move, move.length = " + move.length);
             // If this was a special move (castling or promotion), complete it
-            Board.checkForSpecialMove(fromPos, toPos);
+            if (move.length > 4) {
+                Board.playSpecialMove(move);
+            }
             // Check if game is over, and update status
             if (toPiece != undefined && toPiece.indexOf("king") >= 0) {
                 $("div#status-bar").html("Game over. <span class=\"capitalize\">" + Game.humanPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
@@ -188,37 +195,33 @@ var Board = {
             }
         })
     },
-    // TODO: This needs a lot of work. For one, only call it when we know it's a special move.
-    checkForSpecialMove: function(fromPos, toPos) {
-        // Castling
-        var isSpecialMove = false;
-        var rookFrom = "";
-        var rookTo = "";
-        if (fromPos == "e1") {
-            if (toPos == "c1" && positions["c1"].indexOf("king") >= 0) {
-                rookFrom = "a1";
-                rookTo = "d1";
-                isSpecialMove = true;
+    playSpecialMove: function(move) {
+        // We can assume that move is a 5-character string representing a valid special move:
+        // * First two characters represent the move-from position
+        // * Next two characters represent the move-to position
+        // * Last character represents the type of special move (c = castling, q = queen promotion, k = knight promotion)
+        if (move.charAt(4) == "c") {
+            var rookFrom;
+            var rookTo;
+            switch (move) {
+                case "e1c1c":
+                    rookFrom = "a1";
+                    rookTo = "d1";
+                    break;
+                case "e1g1c":
+                    rookFrom = "h1";
+                    rookTo = "f1";
+                    break;
+                case "e8c8c":
+                    rookFrom = "a8";
+                    rookTo = "d8";
+                    break;
+                case "e8g8c":
+                    rookFrom = "h8";
+                    rookTo = "f8";
+                    break;
             }
-            else if (toPos == "g1" && positions["g1"].indexOf("king") >= 0) {
-                rookFrom = "h1";
-                rookTo = "f1";
-                isSpecialMove = true;
-            }
-        }
-        else if (fromPos == "e8") {
-            if (toPos == "c8" && positions["c8"].indexOf("king") >= 0) {
-                rookFrom = "a8";
-                rookTo = "d8";
-                isSpecialMove = true;
-            }
-            else if (toPos == "g8" && positions["g8"].indexOf("king") >= 0) {
-                rookFrom = "h8";
-                rookTo = "f8";
-                isSpecialMove = true;
-            }
-        }
-        if (isSpecialMove == true) {
+            Debug.log("Moving rookFrom = " + rookFrom + ", rookTo = " + rookTo);
             $("table#board td#" + rookFrom + " a.piece").remove();
             $("table#board td#" + rookTo).html("<a class=\"human piece " + positions[rookFrom] + "\"></a>");
             var rookPiece = positions[rookFrom];
@@ -231,7 +234,8 @@ var Board = {
 $(document).ready(function() {
     Board.init();
 
-    var urlParams = new URLSearchParams(window.location.search); // Get all URL parameters
+    // If the url contains a "debug" variable, turn on the debug panel
+    var urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("debug")) {
         Debug.init();
     }
