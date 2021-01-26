@@ -71,11 +71,10 @@ void Board::setPieces(json & piecePositions) {
     }
 }
 
-std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
+std::vector<std::string> Board::getPieceAvailableMoves(std::string position, bool verifyMoveDoesNotExposeCheck) {
     int index = positionIndex.at(position);
     Piece piece = _pieces[index];
     PieceColor opponentColor = (piece.getColor() == PieceColor::WHITE) ? PieceColor::BLACK : PieceColor::WHITE;
-    
     std::vector<std::string> moves{};
 
     // Pawns need movement rules specific to each color (since they move in opposite directions)
@@ -319,13 +318,26 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
         }
     }
 
+    // Lastly, make sure this move does not put our king in check! If it does, remove from the list
+    if (verifyMoveDoesNotExposeCheck) {
+        auto it = moves.begin();
+        while (it != moves.end()) {
+            if (doesMoveExposeCheck(*it)) {
+                it = moves.erase(it);
+            }
+            else {
+                it++;
+            }
+        }
+    }
+
     return moves;
 }
 
 std::string Board::getMove(PieceColor color) {
     std::vector<std::string> allMoves{};
 
-    // Setup a json object of all possible moves for the specified color
+    // Setup a collection of all possible moves for the specified color
     for (auto it = _pieces.begin(); it != _pieces.end(); it++) {
         if (it->getColor() == color) {
             std::string position = indexPosition.at(it - _pieces.begin());
@@ -347,4 +359,177 @@ std::string Board::getMove(PieceColor color) {
     std::string move = *it;
 
     return move;
+}
+
+void Board::playMove(std::string move) {
+    std::string fromPos = move.substr(0, 2);
+    std::string toPos = move.substr(2, 2);
+    _pieces[positionIndex.at(toPos)] = _pieces[positionIndex.at(fromPos)];
+    _pieces[positionIndex.at(fromPos)] = Piece(PieceColor::NONE, PieceType::NONE);
+}
+
+bool Board::isInCheck(PieceColor checkColor) {
+    PieceColor opponentColor = (checkColor == PieceColor::WHITE) ? PieceColor::BLACK : PieceColor::WHITE;
+    int kingIndex = -1;
+
+    // Get the board index of the king that might in check
+    // TODO: It's probably cheaper to maintain class pointers to the king pieces?
+    for (auto it = _pieces.begin(); it != _pieces.end(); it++) {
+        if (it->getColor() == checkColor && it->getType() == PieceType::KING) {
+            kingIndex = it - _pieces.begin();
+        }
+    }
+
+    // Now look at all attacking board positions from the king's perspective
+    if (checkColor == PieceColor::BLACK) {
+        // Pawn attacking black king from lower left
+        if (kingIndex % 8 >= 1 && _pieces[kingIndex + 7].getColor() == PieceColor::WHITE && _pieces[kingIndex + 7].getType() == PieceType::PAWN) {
+            return true;
+        }
+        // Pawn attacking black king from lower right
+        if (kingIndex % 8 <= 6 && _pieces[kingIndex + 9].getColor() == PieceColor::WHITE && _pieces[kingIndex + 9].getType() == PieceType::PAWN) {
+            return true;
+        }
+    }
+    else if (checkColor == PieceColor::WHITE) {
+        // Pawn attacking white king from upper left
+        if (kingIndex % 8 >= 1 && _pieces[kingIndex - 9].getColor() == PieceColor::BLACK && _pieces[kingIndex - 9].getType() == PieceType::PAWN) {
+            return true;
+        }
+        // Pawn attacking black king from upper right
+        if (kingIndex % 8 <= 6 && _pieces[kingIndex - 7].getColor() == PieceColor::BLACK && _pieces[kingIndex - 9].getType() == PieceType::PAWN) {
+            return true;
+        }
+    }
+    // Do some crazy sorcery to look for knights, deal with this later
+    // Check open spaces along each axis, see if we run into a piece that can capture the king
+    for (int upleft = kingIndex - 9; upleft > 0 && (upleft % 8) != 7; upleft -= 9) {
+        if (_pieces[upleft].getColor() == opponentColor) {
+            if (_pieces[upleft].getType() == PieceType::QUEEN || _pieces[upleft].getType() == PieceType::BISHOP) {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+        if (_pieces[upleft].getColor() != PieceColor::NONE) {
+            break;
+        }
+    }
+    for (int up = kingIndex - 8; up > 0; up -= 8) {
+        if (_pieces[up].getColor() == opponentColor) {
+            if (_pieces[up].getType() == PieceType::QUEEN || _pieces[up].getType() == PieceType::ROOK) {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+        if (_pieces[up].getColor() != PieceColor::NONE) {
+            break;
+        }
+    }
+    for (int upright = kingIndex - 7; upright > 0 && (upright % 8) != 0; upright -= 7) {
+        if (_pieces[upright].getColor() == opponentColor) {
+            if (_pieces[upright].getType() == PieceType::QUEEN || _pieces[upright].getType() == PieceType::BISHOP) {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+        if (_pieces[upright].getColor() != PieceColor::NONE) {
+            break;
+        }
+    }
+    for (int left = kingIndex - 1; left >= kingIndex - (kingIndex % 8); left -= 1) {
+        if (_pieces[left].getColor() == opponentColor) {
+            if (_pieces[left].getType() == PieceType::QUEEN || _pieces[left].getType() == PieceType::ROOK) {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+        if (_pieces[left].getColor() != PieceColor::NONE) {
+            break;
+        }
+    }
+    for (int right = kingIndex + 1; right <= kingIndex + (7 - (kingIndex % 8)); right += 1) {
+        if (_pieces[right].getColor() == opponentColor) {
+            if (_pieces[right].getType() == PieceType::QUEEN || _pieces[right].getType() == PieceType::ROOK) {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+        if (_pieces[right].getColor() != PieceColor::NONE) {
+            break;
+        }
+    }
+    for (int downleft = kingIndex + 7; downleft < 64 && (downleft % 8) != 7; downleft += 7) {
+        if (_pieces[downleft].getColor() == opponentColor) {
+            if (_pieces[downleft].getType() == PieceType::QUEEN || _pieces[downleft].getType() == PieceType::BISHOP) {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+        if (_pieces[downleft].getColor() != PieceColor::NONE) {
+            break;
+        }
+    }
+    for (int down = kingIndex + 8; down < 64; down += 8) {
+        if (_pieces[down].getColor() == opponentColor) {
+            if (_pieces[down].getType() == PieceType::QUEEN || _pieces[down].getType() == PieceType::ROOK) {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+        if (_pieces[down].getColor() != PieceColor::NONE) {
+            break;
+        }
+    }
+    for (int downright = kingIndex + 9; downright < 64 && (downright % 8) != 0; downright += 9) {
+        if (_pieces[downright].getColor() == opponentColor) {
+            if (_pieces[downright].getType() == PieceType::QUEEN || _pieces[downright].getType() == PieceType::BISHOP) {
+                return true;
+            }
+            else {
+                break;
+            }
+        }
+        if (_pieces[downright].getColor() != PieceColor::NONE) {
+            break;
+        }
+    }
+
+
+    // If we got this far, checkColor's king is not in check. Return true
+    return false;
+}
+
+bool Board::doesMoveExposeCheck(std::string move) {
+    // IDEA: Instead of exhaustively looking through opponent's moves, try looking from the king's perspective.
+    // Temporarily play out the move and see if the king is in the line of an attacking piece.
+    // Assume the king was not previously in check.
+
+    bool isCheck = false;
+    std::string fromPos = move.substr(0, 2);
+    Piece movePiece = _pieces[positionIndex.at(fromPos)];
+    PieceColor moveColor = movePiece.getColor();
+    
+    // Temporarily remove the move piece from its original position
+    _pieces[positionIndex.at(fromPos)] = Piece(PieceColor::NONE, PieceType::NONE);
+
+    isCheck = isInCheck(moveColor);
+
+    // Now replace the move piece in its original position
+    _pieces[positionIndex.at(fromPos)] = movePiece;
+
+    return isCheck;
 }

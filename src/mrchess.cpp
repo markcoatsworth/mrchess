@@ -64,12 +64,12 @@ int main(int argc, char* argv[]) {
             {"a8", "black rook"},
             {"b8", "black knight"},
             {"c8", "black bishop"},
-            {"d8", "black queen"},
+            {"a5", "black queen"},
             {"e8", "black king"},
             {"f8", "black bishop"},
             {"g8", "black knight"},
             {"h8", "black rook"},
-            {"a7", "black pawn"},
+            {"d4", "black pawn"},
             {"b7", "black pawn"},
             {"c7", "black pawn"},
             {"d7", "black pawn"},
@@ -94,9 +94,9 @@ int main(int argc, char* argv[]) {
             {"g1", "white knight"},
             {"h1", "white rook"}
         };
-        requestAction = "getMove";
-        requestColor = "black";
-        requestPosition = "c2";
+        requestAction = "getPieceAvailableMoves";
+        requestColor = "white";
+        requestPosition = "d2";
     }
 
 #ifdef WIN32

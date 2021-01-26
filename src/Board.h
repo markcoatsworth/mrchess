@@ -40,13 +40,28 @@ class Board
     /**
      * Get a list of all available moves for the piece at specified position
      */
-    std::vector<std::string> getPieceAvailableMoves(std::string position);
+    std::vector<std::string> getPieceAvailableMoves(std::string position, bool verifyMoveDoesNotExposeCheck = true);
 
     /**
      * Determine the next move for the specified color
      * For now, this move is randomly generated
      */
     std::string getMove(PieceColor color);
+
+    /**
+     * Play the given move, update board data structures accordingly
+     */
+    void playMove(std::string move);
+
+    /**
+     * Determine if this board is in the check, if the specified color king is exposed
+     */
+    bool isInCheck(PieceColor checkColor);
+
+    /**
+     * Determines if a given move puts the board into check
+     */
+    bool doesMoveExposeCheck(std::string move);
 
     /**
      * Map of chess positions (ie. a2, d4) to board array indices (48, 35)
