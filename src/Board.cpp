@@ -1,8 +1,9 @@
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <future>
 #include <iostream>
-#include <iostream>
+#include <thread>
 
 #include "Board.h"
 #include "nlohmann/json.hpp"
@@ -71,7 +72,7 @@ void Board::setPieces(json & piecePositions) {
     }
 }
 
-std::vector<std::string> Board::getPieceAvailableMoves(std::string position, bool verifyMoveDoesNotExposeCheck) {
+std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
     int index = positionIndex.at(position);
     Piece piece = _pieces[index];
     PieceColor opponentColor = (piece.getColor() == PieceColor::WHITE) ? PieceColor::BLACK : PieceColor::WHITE;
@@ -319,15 +320,35 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position, boo
     }
 
     // Lastly, make sure this move does not put our king in check! If it does, remove from the list
-    if (verifyMoveDoesNotExposeCheck) {
-        auto it = moves.begin();
-        while (it != moves.end()) {
-            if (doesMoveExposeCheck(*it)) {
-                it = moves.erase(it);
-            }
-            else {
-                it++;
-            }
+    // Now launch the check function as a thread
+    // Syntax for creating a new thread:
+    // https://thispointer.com/c11-start-thread-by-member-function-with-arguments/
+    // https://stackoverflow.com/questions/49512288/no-instance-of-constructor-stdthreadthread-matches-argument-list
+    // 
+
+    auto it = moves.begin();
+    while (it != moves.end()) {
+        
+        /* These examples launch a std::thread but cannot return a value
+        std::string thisMove = *it;
+        std::thread testThread([this, thisMove] { this->doesMoveExposeCheck(thisMove); });
+        std::thread testThread(&Board::doesMoveExposeCheck, this, thisMove);
+        if (doesMoveExposeCheck(*it)) {
+            it = moves.erase(it);
+        }
+        else {
+            it++;
+        }
+        testThread.join();
+        */
+
+        auto asyncResult = std::async(&Board::doesMoveExposeCheck, this, *it);
+        bool exposesCheck = asyncResult.get();
+        if (exposesCheck) {
+            it = moves.erase(it);
+        }
+        else {
+            it++;
         }
     }
 
@@ -514,22 +535,25 @@ bool Board::isInCheck(PieceColor checkColor) {
 }
 
 bool Board::doesMoveExposeCheck(std::string move) {
-    // IDEA: Instead of exhaustively looking through opponent's moves, try looking from the king's perspective.
-    // Temporarily play out the move and see if the king is in the line of an attacking piece.
-    // Assume the king was not previously in check.
-
+    
     bool isCheck = false;
     std::string fromPos = move.substr(0, 2);
+    std::string toPos = move.substr(2, 4);
     Piece movePiece = _pieces[positionIndex.at(fromPos)];
+    Piece capturedPiece = _pieces[positionIndex.at(toPos)];
     PieceColor moveColor = movePiece.getColor();
     
-    // Temporarily remove the move piece from its original position
+    // Temporarily play the move
+    // TODO: This is almost certainly not thread safe. Either copy the board or add a lock.
     _pieces[positionIndex.at(fromPos)] = Piece(PieceColor::NONE, PieceType::NONE);
+    _pieces[positionIndex.at(toPos)] = movePiece;
 
+    // Look for check
     isCheck = isInCheck(moveColor);
 
-    // Now replace the move piece in its original position
+    // Now undo the move
     _pieces[positionIndex.at(fromPos)] = movePiece;
+    _pieces[positionIndex.at(toPos)] = capturedPiece;
 
     return isCheck;
 }

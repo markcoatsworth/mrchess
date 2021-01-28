@@ -40,7 +40,7 @@ class Board
     /**
      * Get a list of all available moves for the piece at specified position
      */
-    std::vector<std::string> getPieceAvailableMoves(std::string position, bool verifyMoveDoesNotExposeCheck = true);
+    std::vector<std::string> getPieceAvailableMoves(std::string position);
 
     /**
      * Determine the next move for the specified color
