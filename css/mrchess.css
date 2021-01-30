@@ -144,3 +144,65 @@ div#debug-log {
     padding: 5px;
     overflow: auto;
 }
+
+/*** MOBILE DEVICES ***/
+
+/* Portrait */
+@media only screen and (min-device-width: 400px) and (max-device-width: 1200px) and (orientation: portrait) {
+    
+h1 {
+    font-size: 120px;
+    margin: 40px auto;
+}
+
+div#status-bar {
+    font-size: 40px;	
+    height: 50px;
+    margin-bottom: 60px;
+    padding: 10px;
+    width: 88vw;
+}
+
+table#board {
+    border-collapse: collapse;
+    margin: 0 auto;
+    table-layout: fixed;
+    width: 100%;    
+}
+
+table#board tr td {
+    background: #CCC;
+    border: 1px solid #000;
+    height: 11vw;
+    padding: 0px;
+    position: relative;
+    width: 11vw;
+}
+
+table#board tr td div#selected {
+    border: 1vw solid #ff0000;
+    left: 0;
+    height: 9vw;
+    position: absolute;
+    top: 0;
+    width: 9.2vw;
+    z-index: 3;
+}
+
+table#board a.piece {
+    background-size: 100% 100%;
+    display: block;
+    height: 11vw;
+    scroll-padding-left: 0;
+    position: absolute;
+    top: 0;
+    width: 11vw;
+    z-index: 1;
+}
+
+table#board a.availableMove {
+    height: 11vw;
+    width: 11.2vw;
+}
+
+}
