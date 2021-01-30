@@ -5,13 +5,11 @@
 using namespace std;
 
 Piece::Piece(): 
-    _position(""),
     _color(PieceColor::NONE), 
     _type(PieceType::NONE) 
 {}
 
-Piece::Piece(std::string position, PieceColor color, PieceType type):
-    _position(position), 
+Piece::Piece(PieceColor color, PieceType type):
     _color(color), 
     _type(type) 
 {}
@@ -39,7 +37,7 @@ std::string Piece::toString() {
 }
 
 const std::string Piece::getPosition() {
-    return _position;
+    return "";
 }
 
 const PieceColor Piece::getColor() {

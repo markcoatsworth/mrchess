@@ -9,7 +9,7 @@
     #include <debugapi.h>
 #endif
 
-#include "Board.h"
+#include "board.h"
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
@@ -61,50 +61,47 @@ int main(int argc, char* argv[]) {
     // If this is not a POST request, drop in some default values for debugging
     else {
         requestJson["board"] = {
-            {"A8", "black rook"},
-            {"B8", "black knight"},
-            {"C8", "black bishop"},
-            {"D8", "black queen"},
-            {"E8", "black king"},
-            {"F8", "black bishop"},
-            {"G8", "black knight"},
-            {"H8", "black rook"},
-            {"A7", "black pawn"},
-            {"B7", "black pawn"},
-            {"C7", "black pawn"},
-            {"D7", "black pawn"},
-            {"E7", "black pawn"},
-            {"F7", "black pawn"},
-            {"G7", "black pawn"},
-            {"H7", "black pawn"},
-            {"A2", "white pawn"},
-            {"B2", "white pawn"},
-            {"C2", "white pawn"},
-            {"D2", "white pawn"},
-            {"E2", "white pawn"},
-            {"F2", "white pawn"},
-            {"G2", "white pawn"},
-            {"H2", "white pawn"},
-            {"A1", "white rook"},
-            {"B1", "white knight"},
-            {"C1", "white bishop"},
-            {"D1", "white queen"},
-            {"E1", "white king"},
-            {"F1", "white bishop"},
-            {"G1", "white knight"},
-            {"H1", "white rook"}
+            {"a8", "black rook"},
+            {"b8", "black knight"},
+            {"c8", "black bishop"},
+            {"a5", "black queen"},
+            {"e8", "black king"},
+            {"f8", "black bishop"},
+            {"g8", "black knight"},
+            {"h8", "black rook"},
+            {"d4", "black pawn"},
+            {"b7", "black pawn"},
+            {"c7", "black pawn"},
+            {"d7", "black pawn"},
+            {"e7", "black pawn"},
+            {"f7", "black pawn"},
+            {"g7", "black pawn"},
+            {"h7", "black pawn"},
+            {"a2", "white pawn"},
+            {"b2", "white pawn"},
+            {"c2", "white pawn"},
+            {"d2", "white pawn"},
+            {"e2", "white pawn"},
+            {"f2", "white pawn"},
+            {"g2", "white pawn"},
+            {"h2", "white pawn"},
+            {"a1", "white rook"},
+            {"b1", "white knight"},
+            {"c1", "white bishop"},
+            {"d1", "white queen"},
+            {"e1", "white king"},
+            {"f1", "white bishop"},
+            {"g1", "white knight"},
+            {"h1", "white rook"}
         };
         requestAction = "getPieceAvailableMoves";
-        requestColor = "black";
-        requestPosition = "G1";
+        requestColor = "white";
+        requestPosition = "d2";
     }
 
 #ifdef WIN32
-    // If in debug mode, wait for the debugger to attach
+    // Check if the request asked to wait for debugger to attach
     if (requestJson.find("debugger") != requestJson.end() && requestJson["debugger"] == true) {
-        responseJson["found_debugger"] = "true";
-    }
-    if (debug || (requestJson.find("debugger") != requestJson.end() && requestJson["debugger"] == true)) {
         bool is_debugger = false;
         while (!is_debugger) {
             is_debugger = IsDebuggerPresent();
@@ -114,7 +111,7 @@ int main(int argc, char* argv[]) {
 #endif
 
     // Setup the board
-    board.setPositions(requestJson["board"]);
+    board.setPieces(requestJson["board"]);
 
     // Perform the requested action
     if (requestAction == "getPieceAvailableMoves") {

@@ -35,7 +35,7 @@ class Board
     /**
      * Set all the piece positions on the board
      */
-    void setPositions(json &positions);
+    void setPieces(json &piecePositions);
 
     /**
      * Get a list of all available moves for the piece at specified position
@@ -46,41 +46,61 @@ class Board
      * Determine the next move for the specified color
      * For now, this move is randomly generated
      */
-    json getMove(PieceColor color);
+    std::string getMove(PieceColor color);
 
     /**
-     * Map of chess positions (ie. A2, D4) to board array indices (48, 35)
+     * Play the given move, update board data structures accordingly
+     */
+    void playMove(std::string move);
+
+    /**
+     * Determine if this board is in the check, if the specified color king is exposed
+     */
+    bool isInCheck(PieceColor checkColor);
+
+    /**
+     * Determines if a given move exposes the player's king
+     */
+    bool doesMoveExposeKing(std::string move);
+
+    /**
+     * Determines if a given move puts the opponent in check
+     */
+    bool doesMoveCheckOpponent(std::string move);
+
+    /**
+     * Map of chess positions (ie. a2, d4) to board array indices (48, 35)
      * Hardcoded for O(1) lookups
      */
-    const std::unordered_map<std::string, int> positionIndex = {
-        {"A8", 0},  {"B8", 1},  {"C8", 2},  {"D8", 3},  {"E8", 4},  {"F8", 5},  {"G8", 6},  {"H8", 7},
-        {"A7", 8},  {"B7", 9},  {"C7", 10}, {"D7", 11}, {"E7", 12}, {"F7", 13}, {"G7", 14}, {"H7", 15},
-        {"A6", 16}, {"B6", 17}, {"C6", 18}, {"D6", 19}, {"E6", 20}, {"F6", 21}, {"G6", 22}, {"H6", 23},
-        {"A5", 24}, {"B5", 25}, {"C5", 26}, {"D5", 27}, {"E5", 28}, {"F5", 29}, {"G5", 30}, {"H5", 31},
-        {"A4", 32}, {"B4", 33}, {"C4", 34}, {"D4", 35}, {"E4", 36}, {"F4", 37}, {"G4", 38}, {"H4", 39},
-        {"A3", 40}, {"B3", 41}, {"C3", 42}, {"D3", 43}, {"E3", 44}, {"F3", 45}, {"G3", 46}, {"H3", 47},
-        {"A2", 48}, {"B2", 49}, {"C2", 50}, {"D2", 51}, {"E2", 52}, {"F2", 53}, {"G2", 54}, {"H2", 55},
-        {"A1", 56}, {"B1", 57}, {"C1", 58}, {"D1", 59}, {"E1", 60}, {"F1", 61}, {"G1", 62}, {"H1", 63}
+    static inline const std::unordered_map<std::string, int> positionIndex = {
+        {"a8", 0},  {"b8", 1},  {"c8", 2},  {"d8", 3},  {"e8", 4},  {"f8", 5},  {"g8", 6},  {"h8", 7},
+        {"a7", 8},  {"b7", 9},  {"c7", 10}, {"d7", 11}, {"e7", 12}, {"f7", 13}, {"g7", 14}, {"h7", 15},
+        {"a6", 16}, {"b6", 17}, {"c6", 18}, {"d6", 19}, {"e6", 20}, {"f6", 21}, {"g6", 22}, {"h6", 23},
+        {"a5", 24}, {"b5", 25}, {"c5", 26}, {"d5", 27}, {"e5", 28}, {"f5", 29}, {"g5", 30}, {"h5", 31},
+        {"a4", 32}, {"b4", 33}, {"c4", 34}, {"d4", 35}, {"e4", 36}, {"f4", 37}, {"g4", 38}, {"h4", 39},
+        {"a3", 40}, {"b3", 41}, {"c3", 42}, {"d3", 43}, {"e3", 44}, {"f3", 45}, {"g3", 46}, {"h3", 47},
+        {"a2", 48}, {"b2", 49}, {"c2", 50}, {"d2", 51}, {"e2", 52}, {"f2", 53}, {"g2", 54}, {"h2", 55},
+        {"a1", 56}, {"b1", 57}, {"c1", 58}, {"d1", 59}, {"e1", 60}, {"f1", 61}, {"g1", 62}, {"h1", 63}
     };
 
     /**
-     * Map of array indicies (ie. 48, 35) to chess positions (A2, D4)
+     * Map of array indicies (ie. 48, 35) to chess positions (a2, d4)
      * Hardcoded for O(1) lookups
      */
-    const std::unordered_map<int, std::string> indexPosition = {
-        {0, "A8"},  {1, "B8"},  {2, "C8"},  {3, "D8"},  {4, "E8"},  {5, "F8"},  {6, "G8"},  {7, "H8"},
-        {8, "A7"},  {9, "B7"},  {10, "C7"}, {11, "D7"}, {12, "E7"}, {13, "F7"}, {14, "G7"}, {15, "H7"},
-        {16, "A6"}, {17, "B6"}, {18, "C6"}, {19, "D6"}, {20, "E6"}, {21, "F6"}, {22, "G6"}, {23, "H6"},
-        {24, "A5"}, {25, "B5"}, {26, "C5"}, {27, "D5"}, {28, "E5"}, {29, "F5"}, {30, "G5"}, {31, "H5"},
-        {32, "A4"}, {33, "B4"}, {34, "C4"}, {35, "D4"}, {36, "E4"}, {37, "F4"}, {38, "G4"}, {39, "H4"},
-        {40, "A3"}, {41, "B3"}, {42, "C3"}, {43, "D3"}, {44, "E3"}, {45, "F3"}, {46, "G3"}, {47, "H3"},
-        {48, "A2"}, {49, "B2"}, {50, "C2"}, {51, "D2"}, {52, "E2"}, {53, "F2"}, {54, "G2"}, {55, "H2"},
-        {56, "A1"}, {57, "B1"}, {58, "C1"}, {59, "D1"}, {60, "E1"}, {61, "F1"}, {62, "G1"}, {63, "H1"}
+    static inline const std::unordered_map<int, std::string> indexPosition = {
+        {0, "a8"},  {1, "b8"},  {2, "c8"},  {3, "d8"},  {4, "e8"},  {5, "f8"},  {6, "g8"},  {7, "h8"},
+        {8, "a7"},  {9, "b7"},  {10, "c7"}, {11, "d7"}, {12, "e7"}, {13, "f7"}, {14, "g7"}, {15, "h7"},
+        {16, "a6"}, {17, "b6"}, {18, "c6"}, {19, "d6"}, {20, "e6"}, {21, "f6"}, {22, "g6"}, {23, "h6"},
+        {24, "a5"}, {25, "b5"}, {26, "c5"}, {27, "d5"}, {28, "e5"}, {29, "f5"}, {30, "g5"}, {31, "h5"},
+        {32, "a4"}, {33, "b4"}, {34, "c4"}, {35, "d4"}, {36, "e4"}, {37, "f4"}, {38, "g4"}, {39, "h4"},
+        {40, "a3"}, {41, "b3"}, {42, "c3"}, {43, "d3"}, {44, "e3"}, {45, "f3"}, {46, "g3"}, {47, "h3"},
+        {48, "a2"}, {49, "b2"}, {50, "c2"}, {51, "d2"}, {52, "e2"}, {53, "f2"}, {54, "g2"}, {55, "h2"},
+        {56, "a1"}, {57, "b1"}, {58, "c1"}, {59, "d1"}, {60, "e1"}, {61, "f1"}, {62, "g1"}, {63, "h1"}
     };
 
   private:
 
-      std::array<Piece, 64> _positions{ {} };
+      std::array<Piece, 64> _pieces{ {} };
 
 };
 

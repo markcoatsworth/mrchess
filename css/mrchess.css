@@ -7,6 +7,14 @@ h1 {
     text-align: center;
 }
 
+a {
+    color: #666;
+}
+
+span.capitalize {
+    text-transform: capitalize;
+}
+
 /*** GAME PANEL ***/
 
 div#game-panel {
@@ -121,7 +129,7 @@ div#debug-panel {
     box-sizing: border-box;
     display: none;
     height: 100%;
-    padding: 10px;
+    padding: 15px;
 }
 
 div#debug-panel h2 {
