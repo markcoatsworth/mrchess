@@ -67,7 +67,12 @@ var Computer = {
             type: "POST",
             url: "cgi-bin/mrchess.cgi",
             success: function(result) {
-                //Debug.log(result);
+                Debug.log("Computer played " + JSON.stringify(result));
+                if (result.move == "") {
+                    $("div#status-bar").html("Checkmate! Game over. <span class=\"capitalize\">" + Game.humanPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
+                    Board.removeActions();
+                    return;
+                }
                 var fromPos = result.move.substring(0, 2);
                 var toPos = result.move.substring(2, 4);
                 var fromPiece = positions[fromPos];
@@ -82,14 +87,22 @@ var Computer = {
                 $("table#board td#" + toPos).html("<a class=\"piece " + positions[toPos] + "\"></a>");
                 $("div#selected").remove()
                 $("a.availableMove").remove();
-                // If this was a special move (castling or promotion), complete it
-                if (result.move.length > 4) {
+                // If this was a special move (castling or promotion), but not in check, complete it
+                if (result.move.length > 4 && result.move.charAt(result.move.length) != "!") {
                     Board.playSpecialMove(result.move);
                 }
-                // Check if game is over, and update status
+                // Update the game status bar
                 if (toPiece != undefined && toPiece.indexOf("king") >= 0) {
                     $("div#status-bar").html("Game over. <span class=\"capitalize\">" + computerPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
                     Board.removeActions();
+                }
+                else if (toPiece != undefined && toPiece.indexOf("king") >= 0) {
+                    $("div#status-bar").html("Game over. <span class=\"capitalize\">" + computerPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
+                    Board.removeActions();
+                }
+                else if (result.move.charAt(result.move.length - 1) == "!") {
+                    $("div#status-bar").html("<span class=\"capitalize\">" + computerPlayer + " </span> moved " + fromPos + " to " + toPos + ". <strong><span class=\"capitalize\">" + Game.turn + "</span> is in check!</strong>");
+                    Board.setActions();
                 }
                 else {
                     $("div#status-bar").html("<span class=\"capitalize\">" + computerPlayer + " </span> moved " + fromPos + " to " + toPos + ". <span class=\"capitalize\">" + Game.turn + "</span> turn");
@@ -137,7 +150,7 @@ var Board = {
                 debugger: $("#debugger-wait").get(0).checked,
                 position: $(this).parent().attr("id")
             });
-            //Debug.log("Sending postData = " + postData);
+            Debug.log("Sending postData: " + postData);
             // Call our backend CGI script to get available moves
             $.ajax({
                 contentType: "application/json; charset=utf-8",
@@ -178,7 +191,6 @@ var Board = {
             $("table#board td#" + toPos).html("<a class=\"human piece " + positions[toPos] + "\"></a>");
             $("div#selected").remove()
             $("a.availableMove").remove();
-            Debug.log("Checking for special move, move.length = " + move.length);
             // If this was a special move (castling or promotion), complete it
             if (move.length > 4) {
                 Board.playSpecialMove(move);

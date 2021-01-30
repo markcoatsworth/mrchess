@@ -59,9 +59,14 @@ class Board
     bool isInCheck(PieceColor checkColor);
 
     /**
-     * Determines if a given move puts the board into check
+     * Determines if a given move exposes the player's king
      */
-    bool doesMoveExposeCheck(std::string move);
+    bool doesMoveExposeKing(std::string move);
+
+    /**
+     * Determines if a given move puts the opponent in check
+     */
+    bool doesMoveCheckOpponent(std::string move);
 
     /**
      * Map of chess positions (ie. a2, d4) to board array indices (48, 35)
