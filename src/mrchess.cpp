@@ -9,7 +9,7 @@
     #include <debugapi.h>
 #endif
 
-#include "board.h"
+#include "Board.h"
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
@@ -64,12 +64,12 @@ int main(int argc, char* argv[]) {
             {"a8", "black rook"},
             {"b8", "black knight"},
             {"c8", "black bishop"},
-            {"a5", "black queen"},
+            {"d8", "black queen"},
             {"e8", "black king"},
             {"f8", "black bishop"},
             {"g8", "black knight"},
             {"h8", "black rook"},
-            {"d4", "black pawn"},
+            {"a7", "black pawn"},
             {"b7", "black pawn"},
             {"c7", "black pawn"},
             {"d7", "black pawn"},
