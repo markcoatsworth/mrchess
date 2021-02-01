@@ -9,35 +9,8 @@ Piece::Piece()
 {}
 
 Piece::Piece(PieceColor color, PieceType type) {
-    // Set the piece color. We don't need to set the color for BLACK, since
-    // this is the default for any non-null piece.
-    if (color == PieceColor::WHITE) {
-        _piece |= _WHITE;
-    }
-
-    // Set the piece TYPE. Defaults to _NONE;
-    switch (type) {
-        case PieceType::PAWN:
-            _piece |= _PAWN;
-            break;
-        case PieceType::KNIGHT:
-            _piece |= _KNIGHT;
-            break;
-        case PieceType::BISHOP:
-            _piece |= _BISHOP;
-            break;
-        case PieceType::ROOK:
-            _piece |= _ROOK;
-            break;
-        case PieceType::QUEEN:
-            _piece |= _QUEEN;
-            break;
-        case PieceType::KING:
-            _piece |= _KING;
-            break;
-        default:
-            break;
-    }
+    _piece |= (std::byte)color;
+    _piece |= (std::byte)type;
 }
 
 Piece::Piece(const Piece& piece) {
@@ -79,11 +52,11 @@ std::string Piece::toString() {
 }
 
 const PieceColor Piece::getColor() {
-    if ((_piece & _WHITE) == _WHITE) {
+    if ((_piece & (std::byte)PieceColor::WHITE) == (std::byte)PieceColor::WHITE) {
         return PieceColor::WHITE;
     }
     // A black piece has the color bit = 0, but some other bits are set
-    else if ((_piece & _NONE) != _piece) {
+    else if ((_piece | (std::byte)PieceColor::NONE) != (std::byte)PieceColor::NONE) {
         return PieceColor::BLACK;
     }
     else {
@@ -92,25 +65,5 @@ const PieceColor Piece::getColor() {
 }
 
 const PieceType Piece::getType() {
-    if ((_piece & _PAWN) == _PAWN) {
-        return PieceType::PAWN;
-    }
-    else if ((_piece & _KNIGHT) == _KNIGHT) {
-        return PieceType::KNIGHT;
-    }
-    else if ((_piece & _BISHOP) == _BISHOP) {
-        return PieceType::BISHOP;
-    }
-    else if ((_piece & _ROOK) == _ROOK) {
-        return PieceType::ROOK;
-    }
-    else if ((_piece & _QUEEN) == _QUEEN) {
-        return PieceType::QUEEN;
-    }
-    else if ((_piece & _KING) == _KING) {
-        return PieceType::KING;
-    }
-    else {
-        return PieceType::NONE;
-    }
+    return PieceType(_piece & std::byte{ 0b11111100 });
 }
