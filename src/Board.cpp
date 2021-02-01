@@ -121,28 +121,28 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
     }
     // All other pieces have the same movement rules, regardless of color
     else if (piece.getType() == PieceType::KNIGHT) {
-        if ((index - 17) >= 0 && index >= ((index / 8) * 8) + 1 && _pieces[index - 17].getColor() != piece.getColor()) {
+        if ((index - 17) >= 0 && (index % 8) >= 1 && _pieces[index - 17].getColor() != piece.getColor()) {
             moves.push_back(position + indexPosition.at(index - 17));
         }
-        if ((index - 15) >= 0 && index < (((index / 8) + 1) * 8) - 1 && _pieces[index - 15].getColor() != piece.getColor()) {
+        if ((index - 15) >= 0 && (index % 8) <= 6 && _pieces[index - 15].getColor() != piece.getColor()) {
             moves.push_back(position + indexPosition.at(index - 15));
         }
-        if ((index - 10) >= 0 && index >= ((index / 8) * 8) + 2 && _pieces[index - 10].getColor() != piece.getColor()) {
+        if ((index - 10) >= 0 && (index % 8) >= 2 && _pieces[index - 10].getColor() != piece.getColor()) {
             moves.push_back(position + indexPosition.at(index - 10));
         }
-        if ((index - 6) >= 0 && index < (((index / 8) + 1) * 8) - 2 && _pieces[index - 6].getColor() != piece.getColor()) {
+        if ((index - 6) >= 0 && (index % 8) <= 5 && _pieces[index - 6].getColor() != piece.getColor()) {
             moves.push_back(position + indexPosition.at(index - 6));
         }
-        if ((index + 6) < 64 && index >= ((index / 8) * 8) + 2 && _pieces[index + 6].getColor() != piece.getColor()) {
+        if ((index + 6) < 64 && (index % 8) >= 2 && _pieces[index + 6].getColor() != piece.getColor()) {
             moves.push_back(position + indexPosition.at(index + 6));
         }
-        if ((index + 10) < 64 && index < (((index / 8) + 1) * 8) - 2 && _pieces[index + 10].getColor() != piece.getColor()) {
+        if ((index + 10) < 64 && (index % 8) <= 5 && _pieces[index + 10].getColor() != piece.getColor()) {
             moves.push_back(position + indexPosition.at(index + 10));
         }
-        if ((index + 15) < 64 && index >= ((index / 8) * 8) + 1 && _pieces[index + 15].getColor() != piece.getColor()) {
+        if ((index + 15) < 64 && (index % 8) >= 1 && _pieces[index + 15].getColor() != piece.getColor()) {
             moves.push_back(position + indexPosition.at(index + 15));
         }
-        if ((index + 17) < 64 && index < (((index / 8) + 1) * 8) - 1 && _pieces[index + 17].getColor() != piece.getColor()) {
+        if ((index + 17) < 64 && (index % 8) <= 6 && _pieces[index + 17].getColor() != piece.getColor()) {
             moves.push_back(position + indexPosition.at(index + 17));
         }
     }
@@ -366,7 +366,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
     return moves;
 }
 
-std::string Board::getMove(PieceColor color) {
+std::string Board::getRandomMove(PieceColor color) {
     std::vector<std::string> allMoves{};
     std::string move;
 
@@ -426,52 +426,50 @@ bool Board::isInCheck(PieceColor colorInCheck) {
     // Now look at all attacking board positions from the king's perspective
     if (colorInCheck == PieceColor::BLACK) {
         // Pawn attacking black king from lower left
-        if (kingIndex <= 55 && kingIndex % 8 >= 1 && _pieces[kingIndex + 7].getColor() == PieceColor::WHITE && _pieces[kingIndex + 7].getType() == PieceType::PAWN) {
+        if (kingIndex <= 55 && (kingIndex % 8) >= 1 && _pieces[kingIndex + 7].getColor() == PieceColor::WHITE && _pieces[kingIndex + 7].getType() == PieceType::PAWN) {
             return true;
         }
         // Pawn attacking black king from lower right
-        if (kingIndex <= 54 && kingIndex % 8 <= 6 && _pieces[kingIndex + 9].getColor() == PieceColor::WHITE && _pieces[kingIndex + 9].getType() == PieceType::PAWN) {
+        if (kingIndex <= 54 && (kingIndex % 8) <= 6 && _pieces[kingIndex + 9].getColor() == PieceColor::WHITE && _pieces[kingIndex + 9].getType() == PieceType::PAWN) {
             return true;
         }
     }
     else if (colorInCheck == PieceColor::WHITE) {
         // Pawn attacking white king from upper left
-        if (kingIndex >= 9 && kingIndex % 8 >= 1 && _pieces[kingIndex - 9].getColor() == PieceColor::BLACK && _pieces[kingIndex - 9].getType() == PieceType::PAWN) {
+        if (kingIndex >= 9 && (kingIndex % 8) >= 1 && _pieces[kingIndex - 9].getColor() == PieceColor::BLACK && _pieces[kingIndex - 9].getType() == PieceType::PAWN) {
             return true;
         }
         // Pawn attacking black king from upper right
-        if (kingIndex >= 8 && kingIndex % 8 <= 6 && _pieces[kingIndex - 7].getColor() == PieceColor::BLACK && _pieces[kingIndex - 7].getType() == PieceType::PAWN) {
+        if (kingIndex >= 8 && (kingIndex % 8) <= 6 && _pieces[kingIndex - 7].getColor() == PieceColor::BLACK && _pieces[kingIndex - 7].getType() == PieceType::PAWN) {
             return true;
         }
     }
-    int breakPoint = 0;
     // Look for knights
-    // TODO: clean this mess up
-    if ((kingIndex - 17) >= 0 && kingIndex >= ((kingIndex / 8) * 8) + 1 && _pieces[kingIndex - 17].getColor() == opponentColor && _pieces[kingIndex - 17].getType() == PieceType::KNIGHT) {
+    if ((kingIndex - 17) >= 0 && (kingIndex % 8) >= 1 && _pieces[kingIndex - 17].getColor() == opponentColor && _pieces[kingIndex - 17].getType() == PieceType::KNIGHT) {
         return true;
     }
-    if ((kingIndex - 15) >= 0 && kingIndex < (((kingIndex / 8) + 1) * 8) - 1 && _pieces[kingIndex - 15].getColor() == opponentColor && _pieces[kingIndex - 15].getType() == PieceType::KNIGHT) {
+    if ((kingIndex - 15) >= 0 && (kingIndex % 8) <= 6 && _pieces[kingIndex - 15].getColor() == opponentColor && _pieces[kingIndex - 15].getType() == PieceType::KNIGHT) {
         return true;
     }
-    if ((kingIndex - 10) >= 0 && kingIndex >= ((kingIndex / 8) * 8) + 2 && _pieces[kingIndex - 10].getColor() == opponentColor && _pieces[kingIndex - 10].getType() == PieceType::KNIGHT) {
+    if ((kingIndex - 10) >= 0 && (kingIndex % 8) >= 2 && _pieces[kingIndex - 10].getColor() == opponentColor && _pieces[kingIndex - 10].getType() == PieceType::KNIGHT) {
         return true;
     }
-    if ((kingIndex - 6) >= 0 && kingIndex < (((kingIndex / 8) + 1) * 8) - 2 && _pieces[kingIndex - 6].getColor() == opponentColor && _pieces[kingIndex - 6].getType() == PieceType::KNIGHT) {
+    if ((kingIndex - 6) >= 0 && (kingIndex % 8) <= 5 && _pieces[kingIndex - 6].getColor() == opponentColor && _pieces[kingIndex - 6].getType() == PieceType::KNIGHT) {
         return true;
     }
-    if ((kingIndex + 6) < 64 && kingIndex >= ((kingIndex / 8) * 8) + 2 && _pieces[kingIndex + 6].getColor() == opponentColor && _pieces[kingIndex + 6].getType() == PieceType::KNIGHT) {
+    if ((kingIndex + 6) < 64 && (kingIndex % 8) >= 2 && _pieces[kingIndex + 6].getColor() == opponentColor && _pieces[kingIndex + 6].getType() == PieceType::KNIGHT) {
         return true;
     }
-    if ((kingIndex + 10) < 64 && kingIndex < (((kingIndex / 8) + 1) * 8) - 2 && _pieces[kingIndex + 10].getColor() == opponentColor && _pieces[kingIndex + 10].getType() == PieceType::KNIGHT) {
+    if ((kingIndex + 10) < 64 && (kingIndex% 8) <= 5 && _pieces[kingIndex + 10].getColor() == opponentColor && _pieces[kingIndex + 10].getType() == PieceType::KNIGHT) {
         return true;
     }
-    if ((kingIndex + 15) < 64 && kingIndex >= ((kingIndex / 8) * 8) + 1 && _pieces[kingIndex + 15].getColor() == opponentColor && _pieces[kingIndex + 15].getType() == PieceType::KNIGHT) {
+    if ((kingIndex + 15) < 64 && (kingIndex % 8) >= 1 && _pieces[kingIndex + 15].getColor() == opponentColor && _pieces[kingIndex + 15].getType() == PieceType::KNIGHT) {
         return true;
     }
-    if ((kingIndex + 17) < 64 && kingIndex < (((kingIndex / 8) + 1) * 8) - 1 && _pieces[kingIndex + 17].getColor() == opponentColor && _pieces[kingIndex + 17].getType() == PieceType::KNIGHT) {
+    if ((kingIndex + 17) < 64 && (kingIndex % 8) <= 6 && _pieces[kingIndex + 17].getColor() == opponentColor && _pieces[kingIndex + 17].getType() == PieceType::KNIGHT) {
         return true;
     }
-    // Check open spaces along each axis, see if we run into a piece that can capture the king
+    // Look for bishops, rooks and queens
     for (int upleft = kingIndex - 9; upleft > 0 && (upleft % 8) != 7; upleft -= 9) {
         if (_pieces[upleft].getColor() == opponentColor) {
             if (_pieces[upleft].getType() == PieceType::QUEEN || _pieces[upleft].getType() == PieceType::BISHOP) {
@@ -575,6 +573,31 @@ bool Board::isInCheck(PieceColor colorInCheck) {
         if (_pieces[downright].getColor() != PieceColor::NONE) {
             break;
         }
+    }
+    // Look for kings
+    if (kingIndex - 9 > 0 && (kingIndex % 8) >= 1 && _pieces[kingIndex - 9].getColor() == opponentColor && _pieces[kingIndex - 9].getType() == PieceType::KING) {
+        return true;
+    }
+    if (kingIndex - 8 > 0 && _pieces[kingIndex - 8].getColor() == opponentColor && _pieces[kingIndex - 8].getType() == PieceType::KING) {
+        return true;
+    }
+    if (kingIndex - 7 > 0 && (kingIndex % 8) <= 6 && _pieces[kingIndex - 6].getColor() == opponentColor && _pieces[kingIndex - 6].getType() == PieceType::KING) {
+        return true;
+    }
+    if (kingIndex - 1 > 0 && (kingIndex % 8) >= 1 && _pieces[kingIndex - 1].getColor() == opponentColor && _pieces[kingIndex - 1].getType() == PieceType::KING) {
+        return true;
+    }
+    if (kingIndex + 1 < 64 && (kingIndex % 8) <= 6 && _pieces[kingIndex + 1].getColor() == opponentColor && _pieces[kingIndex + 1].getType() == PieceType::KING) {
+        return true;
+    }
+    if (kingIndex + 7 < 64 && (kingIndex % 8) >= 1 && _pieces[kingIndex + 7].getColor() == opponentColor && _pieces[kingIndex + 7].getType() == PieceType::KING) {
+        return true;
+    }
+    if (kingIndex + 8 < 64 && _pieces[kingIndex + 8].getColor() == opponentColor && _pieces[kingIndex + 8].getType() == PieceType::KING) {
+        return true;
+    }
+    if (kingIndex + 9 < 64 && (kingIndex % 8) <= 6 && _pieces[kingIndex + 9].getColor() == opponentColor && _pieces[kingIndex + 9].getType() == PieceType::KING) {
+        return true;
     }
 
 

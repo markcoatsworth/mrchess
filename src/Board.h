@@ -46,7 +46,7 @@ class Board
      * Determine the next move for the specified color
      * For now, this move is randomly generated
      */
-    std::string getMove(PieceColor color);
+    std::string getRandomMove(PieceColor color);
 
     /**
      * Play the given move, update board data structures accordingly

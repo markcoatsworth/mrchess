@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
     }
     else if (requestAction == "getMove") {
         PieceColor color = (requestColor == "white") ? PieceColor::WHITE : PieceColor::BLACK;
-        responseJson["move"] = board.getMove(color);
+        responseJson["move"] = board.getRandomMove(color);
     }
 
     // Send response
