@@ -19,7 +19,7 @@ using namespace std;
  *   - The next two characters represent the move-to position
  *   - Any characters following these represent a special move:
  *       'c' indicates a castling move
- *       'q', 'k', 'b', 'r' indicates a promotion (the piece to promote to)
+ *       'p' indicates promotion. Human player can choose promotion piece; computer always promotes to queen.
  *       '!' indicates check
  *       '!!' indicates checkmate
  */
@@ -93,30 +93,60 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
     // Pawns need movement rules specific to each color (since they move in opposite directions)
     if (piece.getColor() == PieceColor::WHITE && piece.getType() == PieceType::PAWN) {
         if (index >= 8 && _pieces[index - 8].getType() == PieceType::NONE) {
-            moves.push_back(position + indexPosition.at(index - 8));
+            if (index <= 16) { 
+                moves.push_back(position + indexPosition.at(index - 8) + "p");
+            }
+            else {
+                moves.push_back(position + indexPosition.at(index - 8));
+            }
         }
         if (index >= 48 && index <= 55 && _pieces[index - 8].getType() == PieceType::NONE && _pieces[index - 16].getType() == PieceType::NONE) {
             moves.push_back(position + indexPosition.at(index - 16));
         }
         if (index >= 8 && (index % 8) <= 6 && _pieces[index - 7].getColor() == opponentColor) {
-            moves.push_back(position + indexPosition.at(index - 7));
+            if (index <= 16) {
+                moves.push_back(position + indexPosition.at(index - 7) + "p");
+            }
+            else {
+                moves.push_back(position + indexPosition.at(index - 7));
+            }
         }
         if (index >= 9 && (index % 8) >= 1 && _pieces[index - 9].getColor() == opponentColor) {
-            moves.push_back(position + indexPosition.at(index - 9));
+            if (index <= 16) {
+                moves.push_back(position + indexPosition.at(index - 9) + "p");
+            }
+            else {
+                moves.push_back(position + indexPosition.at(index - 9));
+            }
         }
     }
     else if (piece.getColor() == PieceColor::BLACK && piece.getType() == PieceType::PAWN) {
         if (index <= 55 && _pieces[index + 8].getType() == PieceType::NONE) {
-            moves.push_back(position + indexPosition.at(index + 8));
+            if (index >= 48) {
+                moves.push_back(position + indexPosition.at(index + 8) + "p");
+            }
+            else {
+                moves.push_back(position + indexPosition.at(index + 8));
+            }
         }
         if (index >= 8 && index <= 15 && _pieces[index + 8].getType() == PieceType::NONE && _pieces[index + 16].getType() == PieceType::NONE) {
             moves.push_back(position + indexPosition.at(index + 16));
         }
         if (index <= 55 && (index % 8) >= 1 && _pieces[index + 7].getColor() == opponentColor) {
-            moves.push_back(position + indexPosition.at(index + 7));
+            if (index >= 48) {
+                moves.push_back(position + indexPosition.at(index + 7) + "p");
+            }
+            else {
+                moves.push_back(position + indexPosition.at(index + 7));
+            }
         }
         if (index <= 54 && (index % 8) <= 6 && _pieces[index + 9].getColor() == opponentColor) {
-            moves.push_back(position + indexPosition.at(index + 9));
+            if (index >= 48) {
+                moves.push_back(position + indexPosition.at(index + 9) + "p");
+            }
+            else {
+                moves.push_back(position + indexPosition.at(index + 9));
+            }
         }
     }
     // All other pieces have the same movement rules, regardless of color
@@ -409,6 +439,13 @@ void Board::playMove(std::string move) {
     std::string toPos = move.substr(2, 2);
     _pieces[positionIndex.at(toPos)] = _pieces[positionIndex.at(fromPos)];
     _pieces[positionIndex.at(fromPos)] = Piece(PieceColor::NONE, PieceType::NONE);
+
+    // If this was a promotion move, change the piece to a queen.
+    // TODO: Allow promotion to any piece type
+    if (move[move.length() - 1] == 'p') {
+        _pieces[positionIndex.at(toPos)].setType(PieceType::QUEEN);
+    }
+    // TODO: Add rules for castling
 }
 
 bool Board::isInCheck(PieceColor colorInCheck) {

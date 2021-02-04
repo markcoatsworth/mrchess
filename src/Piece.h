@@ -55,6 +55,11 @@ public:
      */
     const PieceType getType();
 
+    /**
+     * Set the type of piece (only used for promotion)
+     */
+    void setType(PieceType type);
+
 
 
   private:

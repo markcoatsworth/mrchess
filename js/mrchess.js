@@ -233,12 +233,16 @@ var Board = {
                     rookTo = "f8";
                     break;
             }
-            Debug.log("Moving rookFrom = " + rookFrom + ", rookTo = " + rookTo);
             $("table#board td#" + rookFrom + " a.piece").remove();
             $("table#board td#" + rookTo).html("<a class=\"human piece " + positions[rookFrom] + "\"></a>");
             var rookPiece = positions[rookFrom];
             delete positions[rookFrom];
             positions[rookTo] = rookPiece;
+        }
+        else if (move.charAt(4) == "p") {
+            var promotePosition = move.substring(2, 4);
+            positions[promotePosition] = Game.humanPlayer + " queen";
+            $("table#board td#" + promotePosition).html("<a class=\"human piece " + positions[promotePosition] + "\"></a>");
         }
     }
 }
