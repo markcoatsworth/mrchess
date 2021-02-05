@@ -70,7 +70,7 @@ const PieceType Piece::getType() {
 
 void Piece::setType(PieceType type) {
     // Remove the old type while preserving color/move status
-    _piece &= std::byte{ 0b0000011 });
+    _piece &= std::byte{ 0b0000011 };
     // Set the new type
     _piece |= (std::byte)type;
 }

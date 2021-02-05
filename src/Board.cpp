@@ -445,7 +445,29 @@ void Board::playMove(std::string move) {
     if (move[move.length() - 1] == 'p') {
         _pieces[positionIndex.at(toPos)].setType(PieceType::QUEEN);
     }
-    // TODO: Add rules for castling
+    // If this was a castling move, adjust the rook position
+    else if (move[move.length() - 1] == 'c') {
+        std::string rookFrom;
+        std::string rookTo;
+        if (move == "e1c1c") {
+            rookFrom = "a1";
+            rookTo = "d1";
+        }
+        else if (move == "e1g1c") {
+            rookFrom = "h1";
+            rookTo = "f1";
+        }
+        else if (move == "e8c8c") {
+            rookFrom = "a8";
+            rookTo = "d8";
+        }
+        else if (move == "e8g8c") {
+            rookFrom = "h8";
+            rookTo = "f8";
+        }
+        _pieces[positionIndex.at(rookTo)] = _pieces[positionIndex.at(rookFrom)];
+        _pieces[positionIndex.at(rookFrom)] = Piece(PieceColor::NONE, PieceType::NONE);
+    }
 }
 
 bool Board::isInCheck(PieceColor colorInCheck) {
