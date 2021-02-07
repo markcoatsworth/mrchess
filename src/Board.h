@@ -8,20 +8,30 @@
 using json = nlohmann::json;
 using namespace std;
 
+enum class MoveStrategy {
+    RANDOM,
+    MINMAX
+};
+
 class Board
 {
-  public:
+public:
 
     /**
      * Constructs a basic Board object
      */
     Board();
-    
+
     /**
      * Constructs a Board object initialized with a set of positions
      */
-    Board(json &positions);
-        
+    Board(json& positions);
+
+    /**
+     * Copy constructor
+     */
+    Board(const Board& board);
+    
     /**
      * Board object destructor. Do we actually need this?
      */
@@ -38,15 +48,24 @@ class Board
     void setPieces(json &piecePositions);
 
     /**
+     * Get a list of all available moves for the specified color
+     */
+    std::vector<std::string> getColorAvailableMoves(PieceColor color);
+
+    /**
      * Get a list of all available moves for the piece at specified position
      */
     std::vector<std::string> getPieceAvailableMoves(std::string position);
 
     /**
-     * Determine the next move for the specified color
-     * For now, this move is randomly generated
+     * Determines a random move for the specified color
      */
     std::string getRandomMove(PieceColor color);
+
+    /**
+     * Evaluates the board score for the specified color
+     */
+    int evaluateScore(PieceColor playerColor);
 
     /**
      * Play the given move, update board data structures accordingly
@@ -57,6 +76,10 @@ class Board
      * Determine if this board is in the check, if the specified color king is exposed
      */
     bool isInCheck(PieceColor checkColor);
+
+
+// Not sure if these need to be private, but they are only used internally...
+private:
 
     /**
      * Determines if a given move exposes the player's king
@@ -98,9 +121,7 @@ class Board
         {56, "a1"}, {57, "b1"}, {58, "c1"}, {59, "d1"}, {60, "e1"}, {61, "f1"}, {62, "g1"}, {63, "h1"}
     };
 
-  private:
-
-      std::array<Piece, 64> _pieces{ {} };
+    std::array<Piece, 64> _pieces{ {} };
 
 };
 

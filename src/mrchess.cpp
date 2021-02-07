@@ -11,6 +11,7 @@
 
 #include "Board.h"
 #include "nlohmann/json.hpp"
+#include "MoveEngine.h"
 
 using json = nlohmann::json;
 using namespace std;
@@ -21,6 +22,7 @@ int main(int argc, char* argv[]) {
     bool debug = false;
     json requestJson;
     json responseJson;
+    MoveEngine moveEngine;
     std::string requestAction;
     std::string requestColor;
     std::string requestMethod;
@@ -94,8 +96,8 @@ int main(int argc, char* argv[]) {
             {"g1", "white knight"},
             {"h1", "white rook"}
         };
-        requestAction = "getPieceAvailableMoves";
-        requestColor = "white";
+        requestAction = "getMove";
+        requestColor = "black";
         requestPosition = "d2";
     }
 
@@ -119,7 +121,7 @@ int main(int argc, char* argv[]) {
     }
     else if (requestAction == "getMove") {
         PieceColor color = (requestColor == "white") ? PieceColor::WHITE : PieceColor::BLACK;
-        responseJson["move"] = board.getRandomMove(color);
+        responseJson["move"] = moveEngine.getMinimaxMove(board, color);
     }
 
     // Send response

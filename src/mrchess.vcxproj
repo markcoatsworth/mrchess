@@ -105,11 +105,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp" />
+    <ClCompile Include="MinimaxNode.cpp" />
+    <ClCompile Include="MoveEngine.cpp" />
     <ClCompile Include="mrchess.cpp" />
     <ClCompile Include="Piece.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Board.h" />
+    <ClInclude Include="MinimaxNode.h" />
+    <ClInclude Include="MoveEngine.h" />
     <ClInclude Include="nlohmann\json.hpp" />
     <ClInclude Include="Piece.h" />
   </ItemGroup>

@@ -19,7 +19,7 @@ using namespace std;
  *   - The next two characters represent the move-to position
  *   - Any characters following these represent a special move:
  *       'c' indicates a castling move
- *       'p' indicates promotion. Human player can choose promotion piece; computer always promotes to queen.
+ *       'p' indicates promotion. Promotions always go to a queen.
  *       '!' indicates check
  *       '!!' indicates checkmate
  */
@@ -30,6 +30,12 @@ Board::Board() {
 
 Board::Board(json &positions) {
     setPieces(positions);
+}
+
+Board::Board(const Board& board) {
+    for (int i = 0; i < 64; i++) {
+        this->_pieces[i] = board._pieces[i];
+    }
 }
 
 Board::~Board() {
@@ -82,6 +88,20 @@ void Board::setPieces(json & piecePositions) {
         Piece piece = Piece(color, type);
         _pieces[positionIndex.at(piecePosition)] = piece;
     }
+}
+
+std::vector<std::string> Board::getColorAvailableMoves(PieceColor color) {
+    std::vector<std::string> allMoves{};
+    for (auto it = _pieces.begin(); it != _pieces.end(); it++) {
+        if (it->getColor() == color) {
+            std::string position = indexPosition.at(it - _pieces.begin());
+            std::vector<std::string> thisPosMoves = getPieceAvailableMoves(position);
+            for (auto& move : thisPosMoves) {
+                allMoves.push_back(move);
+            }
+        }
+    }
+    return allMoves;
 }
 
 std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
@@ -366,23 +386,9 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
     // Syntax for creating a new thread:
     // https://thispointer.com/c11-start-thread-by-member-function-with-arguments/
     // https://stackoverflow.com/questions/49512288/no-instance-of-constructor-stdthreadthread-matches-argument-list
-
+    /*
     auto it = moves.begin();
     while (it != moves.end()) {
-        
-        /* These examples launch a std::thread but cannot return a value
-        std::string thisMove = *it;
-        std::thread testThread([this, thisMove] { this->doesMoveExposeKing(thisMove); });
-        std::thread testThread(&Board::doesMoveExposeKing, this, thisMove);
-        if (doesMoveExposeKing(*it)) {
-            it = moves.erase(it);
-        }
-        else {
-            it++;
-        }
-        testThread.join();
-        */
-
         auto asyncResult = std::async(&Board::doesMoveExposeKing, this, *it);
         bool exposesCheck = asyncResult.get();
         if (exposesCheck) {
@@ -392,36 +398,25 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             it++;
         }
     }
-
+    */
     return moves;
 }
 
 std::string Board::getRandomMove(PieceColor color) {
-    std::vector<std::string> allMoves{};
+    
     std::string move;
-
-    // Setup a collection of all possible moves for the specified color
-    for (auto it = _pieces.begin(); it != _pieces.end(); it++) {
-        if (it->getColor() == color) {
-            std::string position = indexPosition.at(it - _pieces.begin());
-            std::vector<std::string> thisPosMoves = getPieceAvailableMoves(position);
-            for (auto& move : thisPosMoves) {
-                allMoves.push_back(move);
-            }
-        }
-    }
+    std::vector<std::string> availableMoves = getColorAvailableMoves(color);
 
     // Seed a random number generator using current time milliseconds
     auto duration = std::chrono::system_clock::now().time_since_epoch();
     auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
     std::srand(millis);
 
-    // Now pick a move at random
     // If no moves are available, return an empty string. This indicates checkmate.
     // TODO: Should checkmate be evaluated during an offensive move, instead of reactively?
-    if (allMoves.size() > 0) {
-        auto it = allMoves.begin();
-        std::advance(it, std::rand() % allMoves.size());
+    if (availableMoves.size() > 0) {
+        auto it = availableMoves.begin();
+        std::advance(it, std::rand() % availableMoves.size());
         move = *it;
 
         // Does this move put the opponent into a check position? If so indicate this in the move string.
@@ -431,7 +426,12 @@ std::string Board::getRandomMove(PieceColor color) {
         }
     }
 
+
     return move;
+}
+
+int Board::evaluateScore(PieceColor playerColor) {
+    return 1;
 }
 
 void Board::playMove(std::string move) {
