@@ -8,8 +8,11 @@ using namespace std;
 Piece::Piece()
 {}
 
-Piece::Piece(PieceColor color, PieceType type) {
-    _piece |= (std::byte)color;
+Piece::Piece(Color color, PieceType type) {
+    // White piece have to set the second-right bit to 1. Black pieces leave it at 0.
+    if (color == Color::WHITE) {
+        _piece |= std::byte{ 0b00000010 };
+    }
     _piece |= (std::byte)type;
 }
 
@@ -21,10 +24,10 @@ std::string Piece::toString() {
     std::string str = ".";
  
     switch (getColor()) {
-        case PieceColor::WHITE:
+        case Color::WHITE:
             str = "W";
             break;
-        case PieceColor::BLACK:
+        case Color::BLACK:
             str = "B";
             break;
     }
@@ -51,16 +54,18 @@ std::string Piece::toString() {
     return str;
 }
 
-const PieceColor Piece::getColor() {
-    if ((_piece & (std::byte)PieceColor::WHITE) == (std::byte)PieceColor::WHITE) {
-        return PieceColor::WHITE;
+const Color Piece::getColor() {
+    // A white piece has the color bit = 1
+    if ((_piece & std::byte{ 0b00000010 }) == std::byte{ 0b00000010 }) {
+        return Color::WHITE;
     }
     // A black piece has the color bit = 0, but some other bits are set
-    else if ((_piece | (std::byte)PieceColor::NONE) != (std::byte)PieceColor::NONE) {
-        return PieceColor::BLACK;
+    else if ((_piece | (std::byte)0) != (std::byte)0) {
+        return Color::BLACK;
     }
+    // A piece with color NONE is a piece that does not exist, ie. an empty square
     else {
-        return PieceColor::NONE;
+        return Color::NONE;
     }
 }
 

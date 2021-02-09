@@ -34,7 +34,7 @@ Board::Board(json &positions) {
 
 Board::Board(const Board& board) {
     for (int i = 0; i < 64; i++) {
-        this->_pieces[i] = board._pieces[i];
+        _pieces[i] = board._pieces[i];
     }
 }
 
@@ -57,12 +57,12 @@ void Board::setPieces(json & piecePositions) {
         std::string pieceClass = it.value();
         std::string piecePosition = it.key();
 
-        PieceColor color{};
+        Color color{};
         if (pieceClass.find("black") != std::string::npos) {
-            color = PieceColor::BLACK;
+            color = Color::BLACK;
         }
         if (pieceClass.find("white") != std::string::npos) {
-            color = PieceColor::WHITE;
+            color = Color::WHITE;
         }
 
         PieceType type{};
@@ -90,7 +90,7 @@ void Board::setPieces(json & piecePositions) {
     }
 }
 
-std::vector<std::string> Board::getColorAvailableMoves(PieceColor color) {
+std::vector<std::string> Board::getColorAvailableMoves(Color color) {
     std::vector<std::string> allMoves{};
     for (auto it = _pieces.begin(); it != _pieces.end(); it++) {
         if (it->getColor() == color) {
@@ -107,11 +107,11 @@ std::vector<std::string> Board::getColorAvailableMoves(PieceColor color) {
 std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
     int index = positionIndex.at(position);
     Piece piece = _pieces[index];
-    PieceColor opponentColor = (piece.getColor() == PieceColor::WHITE) ? PieceColor::BLACK : PieceColor::WHITE;
+    Color opponentColor = (piece.getColor() == Color::WHITE) ? Color::BLACK : Color::WHITE;
     std::vector<std::string> moves{};
 
     // Pawns need movement rules specific to each color (since they move in opposite directions)
-    if (piece.getColor() == PieceColor::WHITE && piece.getType() == PieceType::PAWN) {
+    if (piece.getColor() == Color::WHITE && piece.getType() == PieceType::PAWN) {
         if (index >= 8 && _pieces[index - 8].getType() == PieceType::NONE) {
             if (index <= 16) { 
                 moves.push_back(position + indexPosition.at(index - 8) + "p");
@@ -140,7 +140,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             }
         }
     }
-    else if (piece.getColor() == PieceColor::BLACK && piece.getType() == PieceType::PAWN) {
+    else if (piece.getColor() == Color::BLACK && piece.getType() == PieceType::PAWN) {
         if (index <= 55 && _pieces[index + 8].getType() == PieceType::NONE) {
             if (index >= 48) {
                 moves.push_back(position + indexPosition.at(index + 8) + "p");
@@ -201,7 +201,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[up].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(up));
             }
-            if (_pieces[up].getColor() != PieceColor::NONE) {
+            if (_pieces[up].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -209,7 +209,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[down].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(down));
             }
-            if (_pieces[down].getColor() != PieceColor::NONE) {
+            if (_pieces[down].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -217,7 +217,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[left].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(left));
             }
-            if (_pieces[left].getColor() != PieceColor::NONE) {
+            if (_pieces[left].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -225,7 +225,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[right].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(right));
             }
-            if (_pieces[right].getColor() != PieceColor::NONE) {
+            if (_pieces[right].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -235,7 +235,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[upleft].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(upleft));
             }
-            if (_pieces[upleft].getColor() != PieceColor::NONE) {
+            if (_pieces[upleft].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -243,7 +243,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[upright].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(upright));
             }
-            if (_pieces[upright].getColor() != PieceColor::NONE) {
+            if (_pieces[upright].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -251,7 +251,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[downleft].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(downleft));
             }
-            if (_pieces[downleft].getColor() != PieceColor::NONE) {
+            if (_pieces[downleft].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -259,7 +259,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[downright].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(downright));
             }
-            if (_pieces[downright].getColor() != PieceColor::NONE) {
+            if (_pieces[downright].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -269,7 +269,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[upleft].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(upleft));
             }
-            if (_pieces[upleft].getColor() != PieceColor::NONE) {
+            if (_pieces[upleft].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -277,7 +277,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[up].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(up));
             }
-            if (_pieces[up].getColor() != PieceColor::NONE) {
+            if (_pieces[up].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -285,7 +285,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[upright].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(upright));
             }
-            if (_pieces[upright].getColor() != PieceColor::NONE) {
+            if (_pieces[upright].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -293,7 +293,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[left].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(left));
             }
-            if (_pieces[left].getColor() != PieceColor::NONE) {
+            if (_pieces[left].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -301,7 +301,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[right].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(right));
             }
-            if (_pieces[right].getColor() != PieceColor::NONE) {
+            if (_pieces[right].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -309,7 +309,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[downleft].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(downleft));
             }
-            if (_pieces[downleft].getColor() != PieceColor::NONE) {
+            if (_pieces[downleft].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -317,7 +317,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[down].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(down));
             }
-            if (_pieces[down].getColor() != PieceColor::NONE) {
+            if (_pieces[down].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -325,7 +325,7 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             if (_pieces[downright].getColor() != piece.getColor()) {
                 moves.push_back(position + indexPosition.at(downright));
             }
-            if (_pieces[downright].getColor() != PieceColor::NONE) {
+            if (_pieces[downright].getColor() != Color::NONE) {
                 break;
             }
         }
@@ -357,24 +357,24 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
         }
         // Castling moves
         // TODO: Need to add verification that the king and rook have never moved before
-        if (piece.getColor() == PieceColor::BLACK && index == 4) {
-            if (_pieces[0].getColor() == PieceColor::BLACK && _pieces[0].getType() == PieceType::ROOK
+        if (piece.getColor() == Color::BLACK && index == 4) {
+            if (_pieces[0].getColor() == Color::BLACK && _pieces[0].getType() == PieceType::ROOK
                     && _pieces[1].getType() == PieceType::NONE && _pieces[2].getType() == PieceType::NONE
                     && _pieces[3].getType() == PieceType::NONE) {
                 moves.push_back(position + indexPosition.at(2) + "c");
             }
-            else if (_pieces[7].getColor() == PieceColor::BLACK && _pieces[7].getType() == PieceType::ROOK
+            else if (_pieces[7].getColor() == Color::BLACK && _pieces[7].getType() == PieceType::ROOK
                     && _pieces[5].getType() == PieceType::NONE && _pieces[6].getType() == PieceType::NONE) {
                 moves.push_back(position + indexPosition.at(6) + "c");
             }
         }
-        else if (piece.getColor() == PieceColor::WHITE && index == 60) {
-            if (_pieces[56].getColor() == PieceColor::WHITE && _pieces[56].getType() == PieceType::ROOK
+        else if (piece.getColor() == Color::WHITE && index == 60) {
+            if (_pieces[56].getColor() == Color::WHITE && _pieces[56].getType() == PieceType::ROOK
                     && _pieces[57].getType() == PieceType::NONE && _pieces[58].getType() == PieceType::NONE
                     && _pieces[59].getType() == PieceType::NONE) {
                 moves.push_back(position + indexPosition.at(58) + "c");
             }
-            else if (_pieces[63].getColor() == PieceColor::WHITE && _pieces[63].getType() == PieceType::ROOK
+            else if (_pieces[63].getColor() == Color::WHITE && _pieces[63].getType() == PieceType::ROOK
                     && _pieces[61].getType() == PieceType::NONE && _pieces[62].getType() == PieceType::NONE) {
                 moves.push_back(position + indexPosition.at(62) + "c");
             }
@@ -386,7 +386,6 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
     // Syntax for creating a new thread:
     // https://thispointer.com/c11-start-thread-by-member-function-with-arguments/
     // https://stackoverflow.com/questions/49512288/no-instance-of-constructor-stdthreadthread-matches-argument-list
-    /*
     auto it = moves.begin();
     while (it != moves.end()) {
         auto asyncResult = std::async(&Board::doesMoveExposeKing, this, *it);
@@ -398,11 +397,10 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
             it++;
         }
     }
-    */
     return moves;
 }
 
-std::string Board::getRandomMove(PieceColor color) {
+std::string Board::getRandomMove(Color color) {
     
     std::string move;
     std::vector<std::string> availableMoves = getColorAvailableMoves(color);
@@ -426,22 +424,49 @@ std::string Board::getRandomMove(PieceColor color) {
         }
     }
 
-
     return move;
 }
 
-int Board::evaluateScore(PieceColor playerColor) {
-    return 1;
+int Board::evaluateScore(Color playerColor) {
+    int score = 0;
+    for (auto it = _pieces.begin(); it != _pieces.end(); it++) {
+        if (it->getColor() == playerColor) {
+            switch (it->getType()) {
+            case PieceType::PAWN:
+                score += 1;
+                break;
+            case PieceType::KNIGHT:
+                score += 3;
+                break;
+            case PieceType::BISHOP:
+                score += 3;
+                break;
+            case PieceType::ROOK:
+                score += 5;
+                break;
+            case PieceType::QUEEN:
+                score += 9;
+                break;
+            case PieceType::KING:
+                score += 200;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    return score;
 }
 
 void Board::playMove(std::string move) {
     std::string fromPos = move.substr(0, 2);
     std::string toPos = move.substr(2, 2);
     _pieces[positionIndex.at(toPos)] = _pieces[positionIndex.at(fromPos)];
-    _pieces[positionIndex.at(fromPos)] = Piece(PieceColor::NONE, PieceType::NONE);
+    _pieces[positionIndex.at(fromPos)] = Piece(Color::NONE, PieceType::NONE);
 
     // If this was a promotion move, change the piece to a queen.
     // TODO: Allow promotion to any piece type
+    // TODO: After promotion re-evaluate check and checkmate
     if (move[move.length() - 1] == 'p') {
         _pieces[positionIndex.at(toPos)].setType(PieceType::QUEEN);
     }
@@ -466,12 +491,12 @@ void Board::playMove(std::string move) {
             rookTo = "f8";
         }
         _pieces[positionIndex.at(rookTo)] = _pieces[positionIndex.at(rookFrom)];
-        _pieces[positionIndex.at(rookFrom)] = Piece(PieceColor::NONE, PieceType::NONE);
+        _pieces[positionIndex.at(rookFrom)] = Piece(Color::NONE, PieceType::NONE);
     }
 }
 
-bool Board::isInCheck(PieceColor colorInCheck) {
-    PieceColor opponentColor = (colorInCheck == PieceColor::WHITE) ? PieceColor::BLACK : PieceColor::WHITE;
+bool Board::isInCheck(Color colorInCheck) {
+    Color opponentColor = (colorInCheck == Color::WHITE) ? Color::BLACK : Color::WHITE;
     int kingIndex = -1;
 
     // Get the board index of the king that might in check
@@ -483,23 +508,23 @@ bool Board::isInCheck(PieceColor colorInCheck) {
     }
 
     // Now look at all attacking board positions from the king's perspective
-    if (colorInCheck == PieceColor::BLACK) {
+    if (colorInCheck == Color::BLACK) {
         // Pawn attacking black king from lower left
-        if (kingIndex <= 55 && (kingIndex % 8) >= 1 && _pieces[kingIndex + 7].getColor() == PieceColor::WHITE && _pieces[kingIndex + 7].getType() == PieceType::PAWN) {
+        if (kingIndex <= 55 && (kingIndex % 8) >= 1 && _pieces[kingIndex + 7].getColor() == Color::WHITE && _pieces[kingIndex + 7].getType() == PieceType::PAWN) {
             return true;
         }
         // Pawn attacking black king from lower right
-        if (kingIndex <= 54 && (kingIndex % 8) <= 6 && _pieces[kingIndex + 9].getColor() == PieceColor::WHITE && _pieces[kingIndex + 9].getType() == PieceType::PAWN) {
+        if (kingIndex <= 54 && (kingIndex % 8) <= 6 && _pieces[kingIndex + 9].getColor() == Color::WHITE && _pieces[kingIndex + 9].getType() == PieceType::PAWN) {
             return true;
         }
     }
-    else if (colorInCheck == PieceColor::WHITE) {
+    else if (colorInCheck == Color::WHITE) {
         // Pawn attacking white king from upper left
-        if (kingIndex >= 9 && (kingIndex % 8) >= 1 && _pieces[kingIndex - 9].getColor() == PieceColor::BLACK && _pieces[kingIndex - 9].getType() == PieceType::PAWN) {
+        if (kingIndex >= 9 && (kingIndex % 8) >= 1 && _pieces[kingIndex - 9].getColor() == Color::BLACK && _pieces[kingIndex - 9].getType() == PieceType::PAWN) {
             return true;
         }
         // Pawn attacking black king from upper right
-        if (kingIndex >= 8 && (kingIndex % 8) <= 6 && _pieces[kingIndex - 7].getColor() == PieceColor::BLACK && _pieces[kingIndex - 7].getType() == PieceType::PAWN) {
+        if (kingIndex >= 8 && (kingIndex % 8) <= 6 && _pieces[kingIndex - 7].getColor() == Color::BLACK && _pieces[kingIndex - 7].getType() == PieceType::PAWN) {
             return true;
         }
     }
@@ -529,7 +554,7 @@ bool Board::isInCheck(PieceColor colorInCheck) {
         return true;
     }
     // Look for bishops, rooks and queens
-    for (int upleft = kingIndex - 9; upleft > 0 && (upleft % 8) != 7; upleft -= 9) {
+    for (int upleft = kingIndex - 9; upleft >= 0 && (upleft % 8) != 7; upleft -= 9) {
         if (_pieces[upleft].getColor() == opponentColor) {
             if (_pieces[upleft].getType() == PieceType::QUEEN || _pieces[upleft].getType() == PieceType::BISHOP) {
                 return true;
@@ -538,11 +563,11 @@ bool Board::isInCheck(PieceColor colorInCheck) {
                 break;
             }
         }
-        if (_pieces[upleft].getColor() != PieceColor::NONE) {
+        if (_pieces[upleft].getColor() != Color::NONE) {
             break;
         }
     }
-    for (int up = kingIndex - 8; up > 0; up -= 8) {
+    for (int up = kingIndex - 8; up >= 0; up -= 8) {
         if (_pieces[up].getColor() == opponentColor) {
             if (_pieces[up].getType() == PieceType::QUEEN || _pieces[up].getType() == PieceType::ROOK) {
                 return true;
@@ -551,7 +576,7 @@ bool Board::isInCheck(PieceColor colorInCheck) {
                 break;
             }
         }
-        if (_pieces[up].getColor() != PieceColor::NONE) {
+        if (_pieces[up].getColor() != Color::NONE) {
             break;
         }
     }
@@ -564,7 +589,7 @@ bool Board::isInCheck(PieceColor colorInCheck) {
                 break;
             }
         }
-        if (_pieces[upright].getColor() != PieceColor::NONE) {
+        if (_pieces[upright].getColor() != Color::NONE) {
             break;
         }
     }
@@ -577,7 +602,7 @@ bool Board::isInCheck(PieceColor colorInCheck) {
                 break;
             }
         }
-        if (_pieces[left].getColor() != PieceColor::NONE) {
+        if (_pieces[left].getColor() != Color::NONE) {
             break;
         }
     }
@@ -590,11 +615,11 @@ bool Board::isInCheck(PieceColor colorInCheck) {
                 break;
             }
         }
-        if (_pieces[right].getColor() != PieceColor::NONE) {
+        if (_pieces[right].getColor() != Color::NONE) {
             break;
         }
     }
-    for (int downleft = kingIndex + 7; downleft < 64 && (downleft % 8) != 7; downleft += 7) {
+    for (int downleft = kingIndex + 7; downleft <= 62 && (downleft % 8) != 7; downleft += 7) {
         if (_pieces[downleft].getColor() == opponentColor) {
             if (_pieces[downleft].getType() == PieceType::QUEEN || _pieces[downleft].getType() == PieceType::BISHOP) {
                 return true;
@@ -603,11 +628,11 @@ bool Board::isInCheck(PieceColor colorInCheck) {
                 break;
             }
         }
-        if (_pieces[downleft].getColor() != PieceColor::NONE) {
+        if (_pieces[downleft].getColor() != Color::NONE) {
             break;
         }
     }
-    for (int down = kingIndex + 8; down < 64; down += 8) {
+    for (int down = kingIndex + 8; down <= 63; down += 8) {
         if (_pieces[down].getColor() == opponentColor) {
             if (_pieces[down].getType() == PieceType::QUEEN || _pieces[down].getType() == PieceType::ROOK) {
                 return true;
@@ -616,11 +641,11 @@ bool Board::isInCheck(PieceColor colorInCheck) {
                 break;
             }
         }
-        if (_pieces[down].getColor() != PieceColor::NONE) {
+        if (_pieces[down].getColor() != Color::NONE) {
             break;
         }
     }
-    for (int downright = kingIndex + 9; downright < 64 && (downright % 8) != 0; downright += 9) {
+    for (int downright = kingIndex + 9; downright <= 63 && (downright % 8) != 0; downright += 9) {
         if (_pieces[downright].getColor() == opponentColor) {
             if (_pieces[downright].getType() == PieceType::QUEEN || _pieces[downright].getType() == PieceType::BISHOP) {
                 return true;
@@ -629,7 +654,7 @@ bool Board::isInCheck(PieceColor colorInCheck) {
                 break;
             }
         }
-        if (_pieces[downright].getColor() != PieceColor::NONE) {
+        if (_pieces[downright].getColor() != Color::NONE) {
             break;
         }
     }
@@ -671,11 +696,11 @@ bool Board::doesMoveExposeKing(std::string move) {
     std::string toPos = move.substr(2, 2);
     Piece movePiece = _pieces[positionIndex.at(fromPos)];
     Piece capturedPiece = _pieces[positionIndex.at(toPos)];
-    PieceColor moveColor = movePiece.getColor();
+    Color moveColor = movePiece.getColor();
     
     // Temporarily play the move
     // TODO: This is probably not thread safe. Either copy the board or add a lock.
-    _pieces[positionIndex.at(fromPos)] = Piece(PieceColor::NONE, PieceType::NONE);
+    _pieces[positionIndex.at(fromPos)] = Piece(Color::NONE, PieceType::NONE);
     _pieces[positionIndex.at(toPos)] = movePiece;
 
     // Look for check
@@ -695,11 +720,11 @@ bool Board::doesMoveCheckOpponent(std::string move) {
     std::string toPos = move.substr(2, 2);
     Piece movePiece = _pieces[positionIndex.at(fromPos)];
     Piece capturedPiece = _pieces[positionIndex.at(toPos)];
-    PieceColor opponentColor = movePiece.getColor() == PieceColor::WHITE ? PieceColor::BLACK : PieceColor::WHITE;
+    Color opponentColor = movePiece.getColor() == Color::WHITE ? Color::BLACK : Color::WHITE;
 
     // Temporarily play the move
     // TODO: This is probably not thread safe. Either copy the board or add a lock.
-    _pieces[positionIndex.at(fromPos)] = Piece(PieceColor::NONE, PieceType::NONE);
+    _pieces[positionIndex.at(fromPos)] = Piece(Color::NONE, PieceType::NONE);
     _pieces[positionIndex.at(toPos)] = movePiece;
 
     // Look for check

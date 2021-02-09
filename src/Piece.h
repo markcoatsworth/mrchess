@@ -5,7 +5,7 @@
 
 using namespace std;
 
-enum class PieceColor { 
+enum class Color { 
     NONE,
     BLACK,
     WHITE
@@ -32,7 +32,7 @@ public:
     /**
      * Piece object constructor with initialialized values
      */
-    Piece(PieceColor color, PieceType type);
+    Piece(Color color, PieceType type);
 
     /**
      * Copy constructor
@@ -48,7 +48,7 @@ public:
     /**
      * Return the color of piece
      */
-    const PieceColor getColor();
+    const Color getColor();
     
     /**
      * Return the type of piece

@@ -3,13 +3,13 @@
 MinimaxNode::MinimaxNode() :
     _board(Board()),
     _score(0),
-    _playerColor(PieceColor::NONE),
+    _playerColor(Color::NONE),
     _childMoves{},
     _move("")
 {
 }
 
-MinimaxNode::MinimaxNode(PieceColor playerColor, Board board, std::string move) :
+MinimaxNode::MinimaxNode(Color playerColor, Board board, std::string move) :
     _board(board),
     _score(0),
     _playerColor(playerColor),
@@ -17,13 +17,16 @@ MinimaxNode::MinimaxNode(PieceColor playerColor, Board board, std::string move) 
     _move(move)
 {
     // We want to play the move after copying the board, not before
-    _board.playMove(_move);
+    if (!_move.empty()) {
+        _board.playMove(_move);
+    }
     // After playing the move, calculate the board score for the playerColor
     _score = _board.evaluateScore(_playerColor);
 }
 
-void MinimaxNode::addChildMove(MinimaxNode childMove) {
+MinimaxNode* MinimaxNode::addChildMove(MinimaxNode childMove) {
     _childMoves.push_back(childMove);
+    return &_childMoves.back();
 }
 
 std::string MinimaxNode::getBestMove() {

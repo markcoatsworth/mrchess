@@ -50,7 +50,7 @@ public:
     /**
      * Get a list of all available moves for the specified color
      */
-    std::vector<std::string> getColorAvailableMoves(PieceColor color);
+    std::vector<std::string> getColorAvailableMoves(Color color);
 
     /**
      * Get a list of all available moves for the piece at specified position
@@ -60,12 +60,12 @@ public:
     /**
      * Determines a random move for the specified color
      */
-    std::string getRandomMove(PieceColor color);
+    std::string getRandomMove(Color color);
 
     /**
      * Evaluates the board score for the specified color
      */
-    int evaluateScore(PieceColor playerColor);
+    int evaluateScore(Color playerColor);
 
     /**
      * Play the given move, update board data structures accordingly
@@ -75,7 +75,7 @@ public:
     /**
      * Determine if this board is in the check, if the specified color king is exposed
      */
-    bool isInCheck(PieceColor checkColor);
+    bool isInCheck(Color checkColor);
 
 
 // Not sure if these need to be private, but they are only used internally...

@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
         responseJson["moves"] = board.getPieceAvailableMoves(requestPosition);
     }
     else if (requestAction == "getMove") {
-        PieceColor color = (requestColor == "white") ? PieceColor::WHITE : PieceColor::BLACK;
+        Color color = (requestColor == "white") ? Color::WHITE : Color::BLACK;
         responseJson["move"] = moveEngine.getMinimaxMove(board, color);
     }
 

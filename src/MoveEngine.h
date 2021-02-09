@@ -10,9 +10,20 @@ public:
 
     MoveEngine();
 
-    void buildMinimaxTree(Board board, PieceColor color, int depth);
+    /*
+     * Wrapper function to build the MinimaxNode tree
+     */
+    void buildMinimaxTree(Board board, Color color);
 
-    std::string getMinimaxMove(Board board, PieceColor color);
+    /*
+     * Recursive function to build the MinimaxNode tree according to depth
+     */
+    void buildMinimaxTreeLevel(MinimaxNode* node, Color color, int depth = 0);
+
+    /*
+     * Get the next move from the MinimaxNode tree
+     */
+    std::string getMinimaxMove(Board board, Color color);
 
 private:
 

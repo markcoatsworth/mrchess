@@ -7,10 +7,16 @@ class MinimaxNode
 {
 public:
     MinimaxNode();
-    MinimaxNode(PieceColor color, Board board, std::string move);
-    void addChildMove(MinimaxNode childMove);
+    MinimaxNode(Color color, Board board, std::string move);
+    MinimaxNode* addChildMove(MinimaxNode childMove);
     std::string getBestMove();
     
+    Board getBoard() {
+        return _board;
+    }
+    Color getColor() {
+        return _playerColor;
+    }
     std::string getMove() {
         return _move;
     }
@@ -21,7 +27,7 @@ public:
 private:
     Board _board;
     int _score;
-    PieceColor _playerColor;
+    Color _playerColor;
     std::list<MinimaxNode> _childMoves;
     std::string _move;
 };
