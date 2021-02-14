@@ -17,8 +17,9 @@ public:
 
     /*
      * Recursive function to build the MinimaxNode tree according to depth
+     * Does not sorting or any other adjustments; just builds the tree
      */
-    void buildMinimaxTreeLevel(MinimaxNode* node, Color color, int depth = 0);
+    void buildMinimaxTreeLevel(MinimaxNode* node, Color color, bool isMaxLevel, int depth = 0);
 
     /*
      * Get the next move from the MinimaxNode tree

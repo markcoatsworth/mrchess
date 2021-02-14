@@ -1,19 +1,21 @@
+#include <iostream>
+
 #include "MinimaxNode.h"
 
 MinimaxNode::MinimaxNode() :
-    _board(Board()),
-    _score(0),
     _playerColor(Color::NONE),
-    _childNodes{},
+    _score(0),
+    _childNodes(nullptr),
     _move("")
 {
 }
 
-MinimaxNode::MinimaxNode(Color playerColor, Board board, std::string move) :
+MinimaxNode::MinimaxNode(Board board, Color playerColor, std::string move, bool isMaxLevel) :
     _board(board),
-    _score(0),
+    _isMaxLevel(isMaxLevel),
     _playerColor(playerColor),
-    _childNodes{},
+    _score(0),
+    _childNodes(nullptr),
     _move(move)
 {
     // TODO: The following should probably not happen in the constructor?
@@ -25,6 +27,42 @@ MinimaxNode::MinimaxNode(Color playerColor, Board board, std::string move) :
     _score = _board.evaluateScore(_playerColor);
 }
 
+// TODO: Could this get merged into the MoveEngine::buildMinimaxTree function?
+double MinimaxNode::getMinimaxScore() {
+
+    // Base case
+    if (_childNodes == nullptr) {
+        return _score;
+    }
+
+    // Recursive case
+    // Start by retrieving score for all child nodes
+    for (auto it = _childNodes->begin(); it != _childNodes->end(); it++) {
+        _score = (*it).getMinimaxScore();
+    }
+
+    // Now return the min or max score for all the child nodes
+    bool isMaxLevel = _childNodes->front()._isMaxLevel;
+    double minimaxScore = isMaxLevel ? 0 : 1;
+    for (auto it = _childNodes->begin(); it != _childNodes->end(); it++) {
+        if (isMaxLevel && it->_score > minimaxScore) {
+            minimaxScore = it->_score;
+        }
+        else if (!isMaxLevel && it->_score < minimaxScore) {
+            minimaxScore = it->_score;
+        }
+    }
+
+    return minimaxScore;
+}
+
 std::string MinimaxNode::findBestMove() {
-    return _childNodes->back().getMove();
+    double minimaxScore = getMinimaxScore();
+    for (auto it = _childNodes->begin(); it != _childNodes->end(); it++) {
+        if (it->_score == minimaxScore) {
+            return it->_move;
+        }
+    }
+
+    return _childNodes->back()._move;
 }
