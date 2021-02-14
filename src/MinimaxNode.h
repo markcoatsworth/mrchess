@@ -8,26 +8,41 @@ class MinimaxNode
 public:
     MinimaxNode();
     MinimaxNode(Color color, Board board, std::string move);
-    MinimaxNode* addChildMove(MinimaxNode childMove);
-    std::string getBestMove();
-    
+    std::string findBestMove();
+
+    bool operator < (const MinimaxNode& node) const {
+        return _score < node._score;
+    }
+
+    bool operator > (const MinimaxNode& node) const {
+        return _score > node._score;
+    }
+
     Board getBoard() {
         return _board;
+    }
+    double getScore() {
+        return _score;
     }
     Color getColor() {
         return _playerColor;
     }
+    std::vector<MinimaxNode>* getChildNodes() {
+        return _childNodes.get();
+    }
+    void setChildNodes(std::unique_ptr<std::vector<MinimaxNode>> childNodes) {
+        _childNodes = std::move(childNodes);
+    }
     std::string getMove() {
         return _move;
     }
-    int getScore() {
-        return _score;
-    }
+    
 
 private:
     Board _board;
-    int _score;
+    double _score;
     Color _playerColor;
-    std::list<MinimaxNode> _childMoves;
+    std::unique_ptr<std::vector<MinimaxNode>> _childNodes;
     std::string _move;
+    bool isMaxLevel;
 };

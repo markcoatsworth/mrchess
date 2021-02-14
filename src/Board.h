@@ -65,7 +65,7 @@ public:
     /**
      * Evaluates the board score for the specified color
      */
-    int evaluateScore(Color playerColor);
+    double evaluateScore(Color playerColor);
 
     /**
      * Play the given move, update board data structures accordingly

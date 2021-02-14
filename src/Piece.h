@@ -67,7 +67,7 @@ public:
     // Each piece is represented by a single byte
     // A null byte (all bits 0) represents a non-existant piece
     // The right-most bit shows if the piece has been moved (0 = not moved, 1 = moved)
-    // The second-right bit represents the color (0 = black, 1 = white)
+    // The second-right bit represents the color (0 = white, 1 = black)
     // The left 6 bits represent the piece type, as per the PieceType enum
     std::byte _piece{ 0b00000000 };
 

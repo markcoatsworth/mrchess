@@ -427,35 +427,39 @@ std::string Board::getRandomMove(Color color) {
     return move;
 }
 
-int Board::evaluateScore(Color playerColor) {
-    int score = 0;
+double Board::evaluateScore(Color playerColor) {
+    Color opponentColor = (playerColor == Color::BLACK) ? Color::WHITE : Color::BLACK;
+    double opponentWeightedSum = 0;
+
+    // Currently, the score of a player's board is the inverse weighted sum of their opponent's pieces
     for (auto it = _pieces.begin(); it != _pieces.end(); it++) {
-        if (it->getColor() == playerColor) {
+        if (it->getColor() == opponentColor) {
             switch (it->getType()) {
             case PieceType::PAWN:
-                score += 1;
+                opponentWeightedSum += 1;
                 break;
             case PieceType::KNIGHT:
-                score += 3;
+                opponentWeightedSum += 3;
                 break;
             case PieceType::BISHOP:
-                score += 3;
+                opponentWeightedSum += 3;
                 break;
             case PieceType::ROOK:
-                score += 5;
+                opponentWeightedSum += 5;
                 break;
             case PieceType::QUEEN:
-                score += 9;
+                opponentWeightedSum += 9;
                 break;
             case PieceType::KING:
-                score += 200;
+                opponentWeightedSum += 200;
                 break;
             default:
                 break;
             }
         }
     }
-    return score;
+
+    return 1 / opponentWeightedSum;
 }
 
 void Board::playMove(std::string move) {
