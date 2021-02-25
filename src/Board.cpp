@@ -427,39 +427,70 @@ std::string Board::getRandomMove(Color color) {
     return move;
 }
 
-double Board::evaluateScore(Color playerColor) {
-    Color opponentColor = (playerColor == Color::BLACK) ? Color::WHITE : Color::BLACK;
-    double opponentWeightedSum = 0;
+// Return the board "score", currently the difference between black and white piece values
+// Positive value indicates black advantage
+// Negative value indicates white advantage
+double Board::evaluateScore() {
+    double blackTotal = 0;
+    double whiteTotal = 0;
 
     // Currently, the score of a player's board is the inverse weighted sum of their opponent's pieces
     for (auto it = _pieces.begin(); it != _pieces.end(); it++) {
-        if (it->getColor() == opponentColor) {
-            switch (it->getType()) {
-            case PieceType::PAWN:
-                opponentWeightedSum += 1;
-                break;
-            case PieceType::KNIGHT:
-                opponentWeightedSum += 3;
-                break;
-            case PieceType::BISHOP:
-                opponentWeightedSum += 3;
-                break;
-            case PieceType::ROOK:
-                opponentWeightedSum += 5;
-                break;
-            case PieceType::QUEEN:
-                opponentWeightedSum += 9;
-                break;
-            case PieceType::KING:
-                opponentWeightedSum += 200;
-                break;
-            default:
-                break;
+        switch (it->getType()) {
+        case PieceType::PAWN:
+            if (it->getColor() == Color::BLACK) {
+                blackTotal += 1;
             }
+            else {
+                whiteTotal += 1;
+            }
+            break;
+        case PieceType::KNIGHT:
+            if (it->getColor() == Color::BLACK) {
+                blackTotal += 3;
+            }
+            else {
+                whiteTotal += 3;
+            }
+            break;
+        case PieceType::BISHOP:
+            if (it->getColor() == Color::BLACK) {
+                blackTotal += 3;
+            }
+            else {
+                whiteTotal += 3;
+            }
+            break;
+        case PieceType::ROOK:
+            if (it->getColor() == Color::BLACK) {
+                blackTotal += 5;
+            }
+            else {
+                whiteTotal += 5;
+            }
+            break;
+        case PieceType::QUEEN:
+            if (it->getColor() == Color::BLACK) {
+                blackTotal += 9;
+            }
+            else {
+                whiteTotal += 9;
+            }
+            break;
+        case PieceType::KING:
+            if (it->getColor() == Color::BLACK) {
+                blackTotal += 200;
+            }
+            else {
+                whiteTotal += 200;
+            }
+            break;
+        default:
+            break;
         }
     }
 
-    return 1 / opponentWeightedSum;
+    return blackTotal - whiteTotal;
 }
 
 void Board::playMove(std::string move) {

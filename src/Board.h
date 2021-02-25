@@ -64,8 +64,10 @@ public:
 
     /**
      * Evaluates the board score for the specified color
+     * Returns a positive value for black advantage (higher value means greater advantage)
+     * Returns a negative value for white advatage (lower value means greater advantage)
      */
-    double evaluateScore(Color playerColor);
+    double evaluateScore();
 
     /**
      * Play the given move, update board data structures accordingly

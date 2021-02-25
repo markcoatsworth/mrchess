@@ -16,7 +16,7 @@ public:
     /*
      * MinimaxNode constructor sets the basic object according to the board and move provided
      */
-    MinimaxNode(Board board, Color color, std::string move, bool isMaxLevel);
+    MinimaxNode(Board board, Color color, std::string move, bool isMaxLevel, int depth);
 
     /*
      * Returns the Minimax score for this level, making recursive calls as needed
@@ -61,10 +61,11 @@ public:
     }
 
 private:
-    Board _board;
-    bool _isMaxLevel;
-    Color _playerColor; 
-    double _score;
-    std::unique_ptr<std::vector<MinimaxNode>> _childNodes;
     std::string _move;
+    double _score;
+    bool _isMaxLevel;
+    Color _playerColor;
+    int _depth;
+    Board _board;
+    std::unique_ptr<std::vector<MinimaxNode>> _childNodes;
 };
