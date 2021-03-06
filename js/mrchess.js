@@ -112,6 +112,8 @@ var Computer = {
             error: function (xhr, ajaxOptions, thrownError) {
                 Debug.log(xhr.status);
                 Debug.log(thrownError);
+                $("div#status-bar").html("Computer crashed, loses by forfeit. <span class=\"capitalize\">" + Game.humanPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
+                Board.removeActions();
             }
         });
     }
@@ -171,6 +173,8 @@ var Board = {
                 error: function (xhr, ajaxOptions, thrownError) {
                     Debug.log(xhr.status);
                     Debug.log(thrownError);
+                    $("div#status-bar").html("Computer crashed, loses by forfeit. <span class=\"capitalize\">" + Game.humanPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
+                    Board.removeActions();
                 }
             });
         });
