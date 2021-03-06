@@ -47,6 +47,39 @@ std::string MoveEngine::getMinimaxMove(Board board, Color color) {
 
     // Now recursively search the tree
     std::string minimaxMove = _minimaxTree.findBestMove();
-    int i = 0;
+
+    // Does this move put the opponent into a check position? If so indicate this in the move string.
+    bool checksOpponent = board.doesMoveCheckOpponent(minimaxMove);
+    if (checksOpponent) {
+        minimaxMove += "!";
+    }
+
     return minimaxMove;
+}
+
+std::string MoveEngine::getRandomMove(Board board, Color color) {
+
+    std::string move;
+    std::vector<std::string> availableMoves = board.getColorAvailableMoves(color);
+
+    // Seed a random number generator using current time milliseconds
+    auto duration = std::chrono::system_clock::now().time_since_epoch();
+    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    std::srand(millis);
+
+    // If no moves are available, return an empty string. This indicates checkmate.
+    // TODO: Should checkmate be evaluated during an offensive move, instead of reactively?
+    if (availableMoves.size() > 0) {
+        auto it = availableMoves.begin();
+        std::advance(it, std::rand() % availableMoves.size());
+        move = *it;
+
+        // Does this move put the opponent into a check position? If so indicate this in the move string.
+        bool checksOpponent = board.doesMoveCheckOpponent(move);
+        if (checksOpponent) {
+            move += "!";
+        }
+    }
+
+    return move;
 }

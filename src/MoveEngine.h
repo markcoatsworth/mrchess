@@ -26,6 +26,11 @@ public:
      */
     std::string getMinimaxMove(Board board, Color color);
 
+    /**
+     * Gets a random move for the specified color
+     */
+    std::string getRandomMove(Board board, Color color);
+
 private:
 
     MinimaxNode _minimaxTree;

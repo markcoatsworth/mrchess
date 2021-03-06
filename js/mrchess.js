@@ -101,6 +101,8 @@ var Computer = {
                     Board.removeActions();
                 }
                 else if (result.move.charAt(result.move.length - 1) == "!") {
+                    $("div#status-bar").addClass("check");
+                    $("table#board a.white.king").addClass("check");
                     $("div#status-bar").html("<span class=\"capitalize\">" + computerPlayer + " </span> moved " + fromPos + " to " + toPos + ". <strong><span class=\"capitalize\">" + Game.turn + "</span> is in check!</strong>");
                     Board.setActions();
                 }
@@ -195,6 +197,8 @@ var Board = {
             $("table#board td#" + toPos).html("<a class=\"human piece " + positions[toPos] + "\"></a>");
             $("div#selected").remove()
             $("a.availableMove").remove();
+            $("div#status-bar").removeClass("check");
+            $("table#board a.white.king").removeClass("check");
             // If this was a special move (castling or promotion), complete it
             if (move.length > 4) {
                 Board.playSpecialMove(move);

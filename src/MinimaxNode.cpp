@@ -43,12 +43,21 @@ double MinimaxNode::getMinimaxScore() {
         (*it).getMinimaxScore();
     }
 
-    // Now return the min or max score for all the child nodes
-    // BUG: Sometimes _childNodes ends up as an empty vector?
+    // If there are no possible moves, this is a checkmate position.
+    // For now, just return an unreasonably high score.
+    // TODO: Find a better way to manage checkmates
     if (_childNodes->size() == 0) {
-        int i = 1; // keep a breakpoint here
+        // Because we care about the _isMaxLevel of the child nodes, without any child nodes we care about the inverse
+        // So if this current level has _isMaxLevel == true, then return a very negative number, and vice verse
+        if (_isMaxLevel) {
+            return -10000;
+        }
+        else {
+            return 10000;
+        }
     }
 
+    // Now return the min or max score for all the child nodes
     bool isMaxLevel = _childNodes->front()._isMaxLevel;
     double minimaxScore = _childNodes->front()._score;
     for (auto it = _childNodes->begin(); it != _childNodes->end(); it++) {

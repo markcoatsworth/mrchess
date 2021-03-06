@@ -37,6 +37,12 @@ div#status-bar {
     width: 640px;
 }
 
+div#status-bar.check {
+    background-color: #ff0000;
+    border: 2px solid #000;
+    color: #000;
+}
+
 /*** GAME BOARD ***/
 
 table#board {
@@ -118,6 +124,7 @@ table#board a.black.queen { background-image: url("../images/black-queen-80.png"
 table#board a.white.bishop { background-image: url("../images/white-bishop-80.png"); }
 table#board a.white.rook { background-image: url("../images/white-rook-80.png"); }
 table#board a.white.king { background-image: url("../images/white-king-80.png"); }
+table#board a.white.king.check { background-image: url("../images/white-king-check-80.png") !important; }
 table#board a.white.knight { background-image: url("../images/white-knight-80.png"); }
 table#board a.white.pawn { background-image: url("../images/white-pawn-80.png"); }
 table#board a.white.queen { background-image: url("../images/white-queen-80.png"); }

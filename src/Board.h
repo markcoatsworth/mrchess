@@ -59,11 +59,6 @@ public:
     std::vector<std::string> getPieceAvailableMoves(std::string position);
 
     /**
-     * Determines a random move for the specified color
-     */
-    std::string getRandomMove(Color color);
-
-    /**
      * Evaluates the board score for the specified color
      * Returns a positive value for black advantage (higher value means greater advantage)
      * Returns a negative value for white advatage (lower value means greater advantage)
@@ -80,19 +75,17 @@ public:
      */
     bool isInCheck(Color checkColor);
 
-
-// Not sure if these need to be private, but they are only used internally...
-private:
+    /**
+     * Determines if a given move puts the opponent in check
+     */
+    bool doesMoveCheckOpponent(std::string move);
 
     /**
      * Determines if a given move exposes the player's king
      */
     bool doesMoveExposeKing(std::string move);
 
-    /**
-     * Determines if a given move puts the opponent in check
-     */
-    bool doesMoveCheckOpponent(std::string move);
+private:
 
     /**
      * Map of chess positions (ie. a2, d4) to board array indices (48, 35)

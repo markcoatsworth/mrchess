@@ -400,33 +400,6 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
     return moves;
 }
 
-std::string Board::getRandomMove(Color color) {
-    
-    std::string move;
-    std::vector<std::string> availableMoves = getColorAvailableMoves(color);
-
-    // Seed a random number generator using current time milliseconds
-    auto duration = std::chrono::system_clock::now().time_since_epoch();
-    auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-    std::srand(millis);
-
-    // If no moves are available, return an empty string. This indicates checkmate.
-    // TODO: Should checkmate be evaluated during an offensive move, instead of reactively?
-    if (availableMoves.size() > 0) {
-        auto it = availableMoves.begin();
-        std::advance(it, std::rand() % availableMoves.size());
-        move = *it;
-
-        // Does this move put the opponent into a check position? If so indicate this in the move string.
-        bool checksOpponent = doesMoveCheckOpponent(move);
-        if (checksOpponent) {
-            move += "!";
-        }
-    }
-
-    return move;
-}
-
 // Return the board "score", currently the difference between black and white piece values
 // Positive value indicates black advantage
 // Negative value indicates white advantage
