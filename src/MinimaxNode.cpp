@@ -24,16 +24,21 @@ MinimaxNode::MinimaxNode(Board board, Color playerColor, std::string move, bool 
     if (!_move.empty()) {
         _board.playMove(_move);
     }
-    // After playing the move, calculate the board score for the playerColor
-    //_score = _board.evaluateScore(_playerColor);
 }
 
 // TODO: Could this get merged into the MoveEngine::buildMinimaxTree function?
 double MinimaxNode::getMinimaxScore() {
 
-    // Base case
+    // Base case: leaf node
     if (_childNodes == nullptr) {
         _score = _board.evaluateScore();
+        return _score;
+    }
+
+    // Base case: checkmate
+    // We can tell this apart from a leaf node because _childNodes is initialized with size 0
+    if (_childNodes->size() == 0) {
+        _score = _isMaxLevel ? 10000 : -10000;
         return _score;
     }
 
@@ -41,20 +46,6 @@ double MinimaxNode::getMinimaxScore() {
     // Start by retrieving score for all child nodes
     for (auto it = _childNodes->begin(); it != _childNodes->end(); it++) {
         (*it).getMinimaxScore();
-    }
-
-    // If there are no possible moves, this is a checkmate position.
-    // For now, just return an unreasonably high score.
-    // TODO: Find a better way to manage checkmates
-    if (_childNodes->size() == 0) {
-        // Because we care about the _isMaxLevel of the child nodes, without any child nodes we care about the inverse
-        // So if this current level has _isMaxLevel == true, then return a very negative number, and vice verse
-        if (_isMaxLevel) {
-            return -10000;
-        }
-        else {
-            return 10000;
-        }
     }
 
     // Now return the min or max score for all the child nodes
