@@ -51,15 +51,15 @@ public:
     /**
      * Get a list of all available moves for the specified color
      */
-    std::vector<std::string> getColorAvailableMoves(Color color);
+    std::vector<std::string> getColorAvailableMoves(Color color, bool checkForExposedKing = true);
 
     /**
      * Get a list of all available moves for the piece at specified position
      */
-    std::vector<std::string> getPieceAvailableMoves(std::string position);
+    std::vector<std::string> getPieceAvailableMoves(std::string position, bool checkForExposedKing = true);
 
     /**
-     * Evaluates the board score for the specified color
+     * Evaluates the board score
      * Returns a positive value for black advantage (higher value means greater advantage)
      * Returns a negative value for white advatage (lower value means greater advantage)
      */

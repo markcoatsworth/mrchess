@@ -12,13 +12,13 @@ MoveEngine::MoveEngine() {
 }
 
 void MoveEngine::buildMinimaxTree(Board board, Color color) {
-    int treeDepth = 3;
+    int treeDepth = 5;
     //auto start = chrono::steady_clock::now();
-    
+
     // The root of the tree is a single MinimaxNode used to start the recursive build
-    _minimaxTree = MinimaxNode(board, Color::NONE,  "", false, treeDepth + 1);
-    buildMinimaxTreeLevel(&_minimaxTree, color, true, treeDepth);
-    
+    _minimaxTree = MinimaxNode(board, Color::NONE,  "", false, treeDepth);
+    buildMinimaxTreeLevel(&_minimaxTree, color, true, treeDepth - 1);
+
     //auto elapsed = chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now() - start).count();
     //cout << "Building minimax tree with depth " << treeDepth << " took " << elapsed << "us" << endl;
 }
@@ -30,9 +30,10 @@ void MoveEngine::buildMinimaxTreeLevel(MinimaxNode* node, Color color, bool isMa
         return;
     }
 
-    // Recursive case.
+    // Recursive case
     std::unique_ptr<std::vector<MinimaxNode>> childNodes = std::make_unique<std::vector<MinimaxNode>>();
-    std::vector<std::string> colorMoves = node->getBoard().getColorAvailableMoves(color);
+    bool checkForExposedKing = (depth == 1) ? false : true;
+    std::vector<std::string> colorMoves = node->getBoard().getColorAvailableMoves(color, checkForExposedKing);
     for (auto& move : colorMoves) {
         Color opponentColor = (color == Color::WHITE) ? Color::BLACK : Color::WHITE;
         childNodes->push_back(MinimaxNode(node->getBoard(), color, move, isMaxLevel, depth));

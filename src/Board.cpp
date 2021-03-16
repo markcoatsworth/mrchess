@@ -90,12 +90,12 @@ void Board::setPieces(json & piecePositions) {
     }
 }
 
-std::vector<std::string> Board::getColorAvailableMoves(Color color) {
+std::vector<std::string> Board::getColorAvailableMoves(Color color, bool checkForExposedKing) {
     std::vector<std::string> allMoves{};
     for (auto it = _pieces.begin(); it != _pieces.end(); it++) {
         if (it->getColor() == color) {
             std::string position = indexPosition.at(it - _pieces.begin());
-            std::vector<std::string> thisPosMoves = getPieceAvailableMoves(position);
+            std::vector<std::string> thisPosMoves = getPieceAvailableMoves(position, checkForExposedKing);
             for (auto& move : thisPosMoves) {
                 allMoves.push_back(move);
             }
@@ -104,7 +104,7 @@ std::vector<std::string> Board::getColorAvailableMoves(Color color) {
     return allMoves;
 }
 
-std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
+std::vector<std::string> Board::getPieceAvailableMoves(std::string position, bool checkForExposedKing) {
     int index = positionIndex.at(position);
     Piece piece = _pieces[index];
     Color opponentColor = (piece.getColor() == Color::WHITE) ? Color::BLACK : Color::WHITE;
@@ -381,22 +381,25 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position) {
         }
     }
 
-    // Lastly, make sure this move does not put our king in check! If it does, remove from the list
+    // If desired, make sure this move does not put our king in check! If it does, remove from the list
     // Now launch the check function as a thread
     // Syntax for creating a new thread:
     // https://thispointer.com/c11-start-thread-by-member-function-with-arguments/
     // https://stackoverflow.com/questions/49512288/no-instance-of-constructor-stdthreadthread-matches-argument-list
-    auto it = moves.begin();
-    while (it != moves.end()) {
-        auto asyncResult = std::async(&Board::doesMoveExposeKing, this, *it);
-        bool exposesCheck = asyncResult.get();
-        if (exposesCheck) {
-            it = moves.erase(it);
-        }
-        else {
-            it++;
+    if (checkForExposedKing) {
+        auto it = moves.begin();
+        while (it != moves.end()) {
+            auto asyncResult = std::async(&Board::doesMoveExposeKing, this, *it);
+            bool exposesCheck = asyncResult.get();
+            if (exposesCheck) {
+                it = moves.erase(it);
+            }
+            else {
+                it++;
+            }
         }
     }
+
     return moves;
 }
 
