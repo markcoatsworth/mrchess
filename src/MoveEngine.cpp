@@ -12,14 +12,14 @@ MoveEngine::MoveEngine() {
 }
 
 void MoveEngine::buildMinimaxTree(Board board, Color color) {
-    int treeDepth = 5;
-    //auto start = chrono::steady_clock::now();
+    int treeDepth = 4; // Includes a root ndoe, so set to 1 higher than actual depth
+    auto start = chrono::steady_clock::now();
 
     // The root of the tree is a single MinimaxNode used to start the recursive build
     _minimaxTree = MinimaxNode(board, Color::NONE,  "", false, treeDepth);
     buildMinimaxTreeLevel(&_minimaxTree, color, true, treeDepth - 1);
 
-    //auto elapsed = chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now() - start).count();
+    auto elapsed = chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now() - start).count();
     //cout << "Building minimax tree with depth " << treeDepth << " took " << elapsed << "us" << endl;
 }
 
@@ -62,11 +62,9 @@ std::string MoveEngine::getMinimaxMove(Board board, Color color) {
     }
 
     // If this move checks the opponent, does it also checkmate? If so indicate this in the move string.
-    if (checksOpponent) {
-        bool checkmatesOpponent = board.doesMoveCheckmateOpponent(minimaxMove);
-        if (checkmatesOpponent) {
-            minimaxMove += "!";
-        }
+    bool checkmatesOpponent = board.doesMoveCheckmateOpponent(minimaxMove);
+    if (checkmatesOpponent) {
+        minimaxMove += checksOpponent ? "!" : "!!";
     }
 
     return minimaxMove;
