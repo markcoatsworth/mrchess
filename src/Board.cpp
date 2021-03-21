@@ -747,3 +747,30 @@ bool Board::doesMoveCheckOpponent(std::string move) {
 
     return isCheck;
 }
+
+bool Board::doesMoveCheckmateOpponent(std::string move) {
+
+    bool isCheckmate = false;
+    std::string fromPos = move.substr(0, 2);
+    std::string toPos = move.substr(2, 2);
+    Piece movePiece = _pieces[positionIndex.at(fromPos)];
+    Piece capturedPiece = _pieces[positionIndex.at(toPos)];
+    Color opponentColor = movePiece.getColor() == Color::WHITE ? Color::BLACK : Color::WHITE;
+
+    // Temporarily play the move
+    // TODO: This is probably not thread safe. Either copy the board or add a lock.
+    _pieces[positionIndex.at(fromPos)] = Piece(Color::NONE, PieceType::NONE);
+    _pieces[positionIndex.at(toPos)] = movePiece;
+
+    // Count the opponent's available moves. 
+    std::vector<std::string> opponentMoves = getColorAvailableMoves(opponentColor);
+    if (opponentMoves.size() == 0) {
+        isCheckmate = true;
+    }
+
+    // Now undo the move
+    _pieces[positionIndex.at(fromPos)] = movePiece;
+    _pieces[positionIndex.at(toPos)] = capturedPiece;
+
+    return isCheckmate;
+}

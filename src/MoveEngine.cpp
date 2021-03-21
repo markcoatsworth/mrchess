@@ -32,7 +32,8 @@ void MoveEngine::buildMinimaxTreeLevel(MinimaxNode* node, Color color, bool isMa
 
     // Recursive case
     std::unique_ptr<std::vector<MinimaxNode>> childNodes = std::make_unique<std::vector<MinimaxNode>>();
-    bool checkForExposedKing = (depth == 1) ? false : true;
+    //bool checkForExposedKing = (depth == 1) ? false : true;
+    bool checkForExposedKing = true;
     std::vector<std::string> colorMoves = node->getBoard().getColorAvailableMoves(color, checkForExposedKing);
     for (auto& move : colorMoves) {
         Color opponentColor = (color == Color::WHITE) ? Color::BLACK : Color::WHITE;
@@ -49,10 +50,23 @@ std::string MoveEngine::getMinimaxMove(Board board, Color color) {
     // Now recursively search the tree
     std::string minimaxMove = _minimaxTree.findBestMove();
 
+    // If the computer is in checkmate, just return the checkmate move string
+    if (minimaxMove == "!!") {
+        return minimaxMove;
+    }
+
     // Does this move put the opponent into a check position? If so indicate this in the move string.
     bool checksOpponent = board.doesMoveCheckOpponent(minimaxMove);
     if (checksOpponent) {
         minimaxMove += "!";
+    }
+
+    // If this move checks the opponent, does it also checkmate? If so indicate this in the move string.
+    if (checksOpponent) {
+        bool checkmatesOpponent = board.doesMoveCheckmateOpponent(minimaxMove);
+        if (checkmatesOpponent) {
+            minimaxMove += "!";
+        }
     }
 
     return minimaxMove;

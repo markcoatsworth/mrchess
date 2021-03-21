@@ -43,6 +43,19 @@ div#status-bar.check {
     color: #000;
 }
 
+div#status-bar.checkmate.black {
+    background-color: #000;
+    color: #fff;
+}
+
+div#status-bar.checkmate.black a {
+    color: #999;
+}
+
+div#status-bar.checkmate.white {
+    background-color: #fff;
+}
+
 /*** GAME BOARD ***/
 
 table#board {

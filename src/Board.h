@@ -81,6 +81,11 @@ public:
     bool doesMoveCheckOpponent(std::string move);
 
     /**
+    * Determines if a given move puts the opponent in checkmate
+    */
+    bool doesMoveCheckmateOpponent(std::string move);
+
+    /**
      * Determines if a given move exposes the player's king
      */
     bool doesMoveExposeKing(std::string move);

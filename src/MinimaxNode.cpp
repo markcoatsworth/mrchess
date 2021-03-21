@@ -38,7 +38,9 @@ double MinimaxNode::getMinimaxScore() {
     // Base case: checkmate
     // We can tell this apart from a leaf node because _childNodes is initialized with size 0
     if (_childNodes->size() == 0) {
-        _score = _isMaxLevel ? 10000 : -10000;
+        // TODO: Find a better way to score checkmates
+        // Currently checkmate score is multiplied by _depth to prioritize more immediate checkmates
+        _score = _isMaxLevel ? _depth * 10000 : _depth * -10000;
         return _score;
     }
 
@@ -72,5 +74,11 @@ std::string MinimaxNode::findBestMove() {
         }
     }
 
+    // If there are no moves available, the computer is in checkmate
+    if (_childNodes->size() == 0) {
+        return "!!";
+    }
+
+    // TODO: What's the logic here for returning the back() node? I thought nodes weren't sorted?
     return _childNodes->back()._move;
 }

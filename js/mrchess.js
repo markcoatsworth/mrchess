@@ -68,8 +68,10 @@ var Computer = {
             url: "cgi-bin/mrchess.cgi",
             success: function(result) {
                 Debug.log("Computer played " + JSON.stringify(result));
-                if (result.move == "") {
-                    $("div#status-bar").html("Checkmate! Game over. <span class=\"capitalize\">" + Game.humanPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
+                if (result.move == "!!") {
+                    $("div#status-bar").addClass("checkmate white");
+                    $("table#board a.black.king").addClass("checkmate");
+                    $("div#status-bar").html("Game over. <span class=\"capitalize\">" + Game.humanPlayer + " </span> checkmates, wins! <a href=\"javascript:location.reload();\">New game</a>");
                     Board.removeActions();
                     return;
                 }
@@ -92,12 +94,10 @@ var Computer = {
                     Board.playSpecialMove(result.move);
                 }
                 // Update the game status bar
-                if (toPiece != undefined && toPiece.indexOf("king") >= 0) {
-                    $("div#status-bar").html("Game over. <span class=\"capitalize\">" + computerPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
-                    Board.removeActions();
-                }
-                else if (toPiece != undefined && toPiece.indexOf("king") >= 0) {
-                    $("div#status-bar").html("Game over. <span class=\"capitalize\">" + computerPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
+                if (result.move.substring(result.move.length - 2) == "!!") {
+                    $("div#status-bar").addClass("checkmate black");
+                    $("table#board a.white.king").addClass("checkmate");
+                    $("div#status-bar").html("Game over. <span class=\"capitalize\">" + computerPlayer + " </span> checkmates, wins! <a href=\"javascript:location.reload();\">New game</a>");
                     Board.removeActions();
                 }
                 else if (result.move.charAt(result.move.length - 1) == "!") {
@@ -114,6 +114,7 @@ var Computer = {
             error: function (xhr, ajaxOptions, thrownError) {
                 Debug.log(xhr.status);
                 Debug.log(thrownError);
+                $("div#status-bar").addClass("checkmate white");
                 $("div#status-bar").html("Computer crashed, loses by forfeit. <span class=\"capitalize\">" + Game.humanPlayer + "</span> wins! <a href=\"javascript:location.reload();\">New game</a>");
                 Board.removeActions();
             }
@@ -216,10 +217,10 @@ var Board = {
         })
     },
     playSpecialMove: function(move) {
-        // We can assume that move is a 5-character string representing a valid special move:
+        // We can assume that move is a string representing a valid special move:
         // * First two characters represent the move-from position
         // * Next two characters represent the move-to position
-        // * Last character represents the type of special move (c = castling, q = queen promotion, k = knight promotion)
+        // * Next character represents the type of special move (c = castling, q = queen promotion, k = knight promotion)
         if (move.charAt(4) == "c") {
             var rookFrom;
             var rookTo;
