@@ -12,7 +12,7 @@ MoveEngine::MoveEngine() {
 }
 
 void MoveEngine::buildMinimaxTree(Board board, Color color) {
-    int treeDepth = 4; // Includes a root ndoe, so set to 1 higher than actual depth
+    int treeDepth = 4; // Includes a root node, so set to 1 higher than actual depth
     auto start = chrono::steady_clock::now();
 
     // The root of the tree is a single MinimaxNode used to start the recursive build
