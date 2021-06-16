@@ -1,13 +1,38 @@
-// 010-TestCase.cpp
-
 // Let Catch provide main():
 #define CATCH_CONFIG_MAIN
 
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+
 #include "catch.hpp"
+#include "../src/Board.h"
+#include "../src/Piece.h"
+#include "../src/nlohmann/json.hpp"
+
+using json = nlohmann::json;
+using namespace std;
+
 
 int Factorial(int number) {
-    return number <= 1 ? number : Factorial(number - 1) * number;  // fail
- // return number <= 1 ? 1      : Factorial( number - 1 ) * number;  // pass
+    //return number <= 1 ? number : Factorial(number - 1) * number;  // fail
+    return number <= 1 ? 1      : Factorial( number - 1 ) * number;  // pass
+}
+
+json getAvailableMoves(json request) {
+    json response;
+    return response;
+}
+
+TEST_CASE("Rook legal moves", "[single-file]") {
+    Board board;
+    json requestJson;
+    requestJson["board"] = {
+            {"b7", "black rook"},
+    };
+    board.setPieces(requestJson["board"]);
+    json responseJson;
+    responseJson["moves"] = board.getPieceAvailableMoves("b7");
 }
 
 TEST_CASE("Factorial of 0 is 1 (fail)", "[single-file]") {
