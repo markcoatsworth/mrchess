@@ -39,6 +39,11 @@ public:
     ~Board();
 
     /**
+     * Clear all pieces from the board
+     */
+    void clear();
+
+    /**
       Draw an ASCII representation of the board. Used for debugging.
      */
     void draw();

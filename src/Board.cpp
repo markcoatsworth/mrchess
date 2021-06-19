@@ -42,6 +42,10 @@ Board::~Board() {
 
 }
 
+void Board::clear() {
+    _pieces = {};
+}
+
 void Board::draw() {
     for (unsigned int i = 0; i < _pieces.size(); i++) {
         cout << _pieces[i].toString() << "\t";
