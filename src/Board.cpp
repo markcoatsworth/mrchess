@@ -680,7 +680,7 @@ bool Board::isInCheck(Color colorInCheck) {
     if (kingIndex - 8 > 0 && _pieces[kingIndex - 8].getColor() == opponentColor && _pieces[kingIndex - 8].getType() == PieceType::KING) {
         return true;
     }
-    if (kingIndex - 7 > 0 && (kingIndex % 8) <= 6 && _pieces[kingIndex - 6].getColor() == opponentColor && _pieces[kingIndex - 6].getType() == PieceType::KING) {
+    if (kingIndex - 7 > 0 && (kingIndex % 8) <= 6 && _pieces[kingIndex - 7].getColor() == opponentColor && _pieces[kingIndex - 7].getType() == PieceType::KING) {
         return true;
     }
     if (kingIndex - 1 > 0 && (kingIndex % 8) >= 1 && _pieces[kingIndex - 1].getColor() == opponentColor && _pieces[kingIndex - 1].getType() == PieceType::KING) {
