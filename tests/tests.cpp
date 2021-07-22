@@ -91,18 +91,16 @@ TEST_CASE("Famous games 1-move checkmates") {
         bool checkmate = responseJson["move"] == "a2c2!!" || responseJson["move"] == "b4a3!!";
         REQUIRE(checkmate);
     }
-    SECTION("Janez Barle vs Iztok Jelen 1979") {
+    SECTION("Short vs Morozevich 2002") {
         requestJson["board"] = {
-            {"a8", "black rook"}, {"f8", "black rook"}, {"h8", "black king"},
-            {"a7", "black pawn"}, {"b7", "black pawn"}, {"c7", "black pawn"}, {"d7", "black bishop"}, {"g7", "black pawn"}, {"h7", "black pawn"},
-            {"c4", "white knight"},
-            {"a3", "white pawn"}, {"c3", "white pawn"}, {"g3", "white queen"},
-            {"a2", "white bishop"}, {"b2", "white pawn"}, {"e2", "white rook"}, {"h2", "white pawn"},
-            {"a1", "white rook"}, {"e1", "black knight"}, {"h1", "white king"}
+            {"a6", "black knight"}, {"e6", "black king"}, {"h6", "black pawn"},
+            {"c5", "white knight"}, {"e5", "black bishop"}, {"g5", "black pawn"},
+            {"e4", "white king"}, {"f4", "black pawn"}, {"g4", "white pawn"},
+            {"f3", "white pawn"}, {"h3", "white pawn"}
         };
         board.setPieces(requestJson["board"]);
         responseJson["move"] = moveEngine.getMinimaxMove(board, Color::BLACK);
-        REQUIRE(responseJson["move"] == "f8f1!!");
+        REQUIRE(responseJson["move"] == "a6c5!!");
     }
     SECTION("The King is Trapped, Ghinda vs Stohl 1985") {
         requestJson["board"] = {
