@@ -1,0 +1,17 @@
+cgi-bin/debug.bat
+cgi-bin/mrchess.exe
+cgi-bin/mrchess.ilk
+cgi-bin/mrchess.pdb
+images/Chess_Pieces_Sprite.svg
+src/.vs
+src/cmake_install.cmake
+src/CMakeCache.txt
+src/CMakeFiles/
+src/Debug
+src/Makefile
+src/x64
+tests/Debug
+tests/tests.exe
+tests/tests.ilk
+tests/tests.pdb
+tests/x64
