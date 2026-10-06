@@ -1,0 +1,26 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/.*/**",
+      "**/node_modules/**",
+      "Dockerfile",
+      "README.md",
+      "cgi-bin/**",
+      "deploy/**",
+      "src/**",
+      "tests/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/cgi-bin/mrchess.cgi",
+        "run": {
+          "serviceId": "mrchess",
+          "region": "us-central1"
+        }
+      }
+    ]
+  }
+}

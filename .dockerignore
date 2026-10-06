@@ -1,0 +1,12 @@
+.git
+cgi-bin
+tests
+src/.vs
+src/Debug
+src/x64
+src/CMakeCache.txt
+src/CMakeFiles
+src/cmake_install.cmake
+src/Makefile
+src/*.sln
+src/*.vcxproj*

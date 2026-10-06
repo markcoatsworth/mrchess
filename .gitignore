@@ -14,4 +14,4 @@ tests/Debug
 tests/tests.exe
 tests/tests.ilk
 tests/tests.pdb
-tests/x64
+tests/x64.firebase/

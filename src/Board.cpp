@@ -386,15 +386,12 @@ std::vector<std::string> Board::getPieceAvailableMoves(std::string position, boo
     }
 
     // If desired, make sure this move does not put our king in check! If it does, remove from the list
-    // Now launch the check function as a thread
-    // Syntax for creating a new thread:
-    // https://thispointer.com/c11-start-thread-by-member-function-with-arguments/
-    // https://stackoverflow.com/questions/49512288/no-instance-of-constructor-stdthreadthread-matches-argument-list
+    // Called directly rather than via std::async: each result was awaited immediately, so the threads
+    // never ran in parallel and thread creation dominated the search time (~55x slower).
     if (checkForExposedKing) {
         auto it = moves.begin();
         while (it != moves.end()) {
-            auto asyncResult = std::async(&Board::doesMoveExposeKing, this, *it);
-            bool exposesCheck = asyncResult.get();
+            bool exposesCheck = doesMoveExposeKing(*it);
             if (exposesCheck) {
                 it = moves.erase(it);
             }
